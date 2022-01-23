@@ -1,0 +1,38 @@
+# General chat format
+# <message> should not be modified.
+format: "[<mmo_level>] <rank> <username> [<town>|<nation>] > <message>"
+
+# Please use https://webui.adventure.kyori.net/ ! It'll be way more easier ;)
+components:
+    mmo_level: "<hover:show_text:'waw'>\
+        <click:suggest_command:'/stats %player_name%'>\
+        <yellow>\
+        LVL \
+        <aqua>\
+        %lbmmo_palier%\
+        </aqua>\
+        </yellow>\
+        </click>\
+        </hover>"
+
+    rank: <red>ADMIN</red>
+
+    username: "<hover:show_text:'%townyadvanced_player_status%\n%player_name%'>\
+        <click:suggest_command:'/tpa %player_name%'>\
+        %townyadvanced_towny_colour%%player_name%\
+        </click>\
+        </hover>"
+
+    town:
+        "<hover:show_text:'%townyadvanced_town%\n%townyadvanced_town_residents_amount% résidents'>\
+        <click:suggest_command:'/t spawn %townyadvanced_town%'>\
+        %townyadvanced_town_tag%\
+        </click>\
+        </hover>"
+
+    nation:
+        "<hover:show_text:'%townyadvanced_nation%\n%townyadvanced_nation_residents_amount% résidents'>\
+        <click:suggest_command:'/n spawn %townyadvanced_nation%'>\
+        %townyadvanced_nation_tag%\
+        </click>\
+        </hover>"

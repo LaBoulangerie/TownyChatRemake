@@ -1,0 +1,7 @@
+name: TownyChat
+version: ${project.version}
+main: net.laboulangerie.townychat.TownyChat
+api-version: 1.17
+authors: [PainOchoco]
+depend: [Vault, Towny]
+softdepend: [PlaceholderAPI]
