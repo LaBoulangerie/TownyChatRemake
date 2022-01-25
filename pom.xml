@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.laboulangerie</groupId>
-    <artifactId>TownyChat</artifactId>
+    <artifactId>TownyChatRemake</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>TownyChat</name>
+    <name>TownyChatRemake</name>
 
     <properties>
         <java.version>16</java.version>
@@ -42,7 +42,7 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>TownyChat</finalName>
+        <finalName>TownyChatRemake</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
