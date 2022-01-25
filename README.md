@@ -2,6 +2,10 @@
 
 TownyChatRemake is a simple yet fully customizable chat plugin that syncs with [Towny](https://github.com/TownyAdvanced/Towny).
 
+## 👀 Preview
+
+![image](https://user-images.githubusercontent.com/47084457/150990835-58cbb247-5d27-4409-8b81-fae8e9ebfed7.png "TownyChatRemake Preview")
+
 ## 🛠 Usage
 
 ### Commands
