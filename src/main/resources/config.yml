@@ -1,38 +1,42 @@
-# General chat format
-# <message> should not be modified.
-format: "[<mmo_level>] <rank> <username> [<town>|<nation>] > <message>"
+# Useful links to make your chat even more beautiful:
+# MiniMessages Format doc: https://docs.adventure.kyori.net/minimessage#format
+# MiniMessages WebUI: https://webui.adventure.kyori.net/
+# PAPI Placeholders: https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Placeholders
 
-# Please use https://webui.adventure.kyori.net/ ! It'll be way more easier ;)
-components:
-    mmo_level: "<hover:show_text:'waw'>\
-        <click:suggest_command:'/stats %player_name%'>\
-        <yellow>\
-        LVL \
-        <aqua>\
-        %lbmmo_palier%\
-        </aqua>\
-        </yellow>\
-        </click>\
-        </hover>"
+# Channel name can be modified
+# Channel format can be modified with PAPI's placeholders and MiniMessage syntax.
+# MiniMessage syntax is powerful, you can format and add hover/click events easily!
+# Channel command can be modified but you'll need to restart your server to get the changes.
 
-    rank: <red>ADMIN</red>
-
-    username: "<hover:show_text:'%townyadvanced_player_status%\n%player_name%'>\
-        <click:suggest_command:'/tpa %player_name%'>\
-        %townyadvanced_towny_colour%%player_name%\
-        </click>\
-        </hover>"
+# You can define custom templates in the section below
+# and be used them in channel formats like so: <TEMPLATE NAME> !
+channels:
+    general:
+        name: "General Chat"
+        format: "<town><nation><rank> <username> > <message>"
+        command: "gc"
 
     town:
-        "<hover:show_text:'%townyadvanced_town%\n%townyadvanced_town_residents_amount% résidents'>\
-        <click:suggest_command:'/t spawn %townyadvanced_town%'>\
-        %townyadvanced_town_tag%\
-        </click>\
-        </hover>"
+        name: "Town Chat"
+        format: "<aqua><bold>TC</bold></aqua> <rank> <username> <aqua>> <message>"
+        command: "tc"
 
     nation:
-        "<hover:show_text:'%townyadvanced_nation%\n%townyadvanced_nation_residents_amount% résidents'>\
-        <click:suggest_command:'/n spawn %townyadvanced_nation%'>\
-        %townyadvanced_nation_tag%\
-        </click>\
-        </hover>"
+        name: "Nation Chat"
+        format: "<gold><bold>NC</bold></gold> <town><rank> <username> <gold>> <message>"
+        command: "nc"
+
+# You can use PAPI's placeholders and MiniMessage syntax here too!
+templates:
+    rank: "%townyadvanced_towny_colour%%townyadvanced_player_status%"
+
+    username: "%townyadvanced_towny_colour%%player_name%"
+
+    town: "<hover:show_text:'%townyadvanced_town_formatted%\n%townyadvanced_town_residents_amount% resident.s'>%townyadvanced_town_tag%</hover>"
+
+    nation: "<hover:show_text:'%townyadvanced_nation_formatted%\n%townyadvanced_nation_residents_amount% resident.s'>%townyadvanced_nation_tag%</hover>"
+
+lang:
+    channel_switched: "Switched to <channel>"
+    err_channel_not_found: "Channel <channel> not found"
+    err_sender_not_player: "<red>Vous devez être en jeu pour exécuter la commande"

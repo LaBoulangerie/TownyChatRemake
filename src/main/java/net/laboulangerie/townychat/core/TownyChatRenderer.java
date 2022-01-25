@@ -17,33 +17,42 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.laboulangerie.townychat.TownyChat;
+import net.laboulangerie.townychat.player.ChatPlayer;
+import net.laboulangerie.townychat.player.ChatPlayerManager;
 
 public class TownyChatRenderer implements ChatRenderer {
     private FileConfiguration config;
+    private ChatPlayerManager chatPlayerManager;
 
     public TownyChatRenderer() {
         this.config = TownyChat.PLUGIN.getConfig();
+        this.chatPlayerManager = TownyChat.PLUGIN.getChatPlayerManager();
     }
 
     @Override
     public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName,
             @NotNull Component message,
             @NotNull Audience viewer) {
-        String format = PlaceholderAPI.setPlaceholders(source, config.getString("format"));
 
-        Component parsedComponent = MiniMessage.get().parse(format,
-                parseComponents(source, message));
+        ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
+        String channelFormat = chatPlayer.getCurrentChannel().getFormat();
+
+        String papiFormat = PlaceholderAPI.setPlaceholders(source, channelFormat);
+        List<Template> templates = parseTemplates(source, message);
+
+        Component parsedComponent = MiniMessage.get().parse(papiFormat, templates);
 
         return parsedComponent;
     }
 
-    private List<Template> parseComponents(Player player, Component message) {
-        ConfigurationSection section = config.getConfigurationSection("components");
+    private List<Template> parseTemplates(Player player, Component message) {
+        ConfigurationSection section = config.getConfigurationSection("templates");
 
         TextComponent textMessage = (TextComponent) message;
-        Component msg = MiniMessage.get().parse(textMessage.content());
+        Component messageComponent = MiniMessage.get().parse(textMessage.content());
 
-        ArrayList<Template> templates = new ArrayList<>(Arrays.asList(Template.of("message", msg)));
+        ArrayList<Template> templates = new ArrayList<>(Arrays.asList(
+                Template.of("message", messageComponent)));
 
         for (String key : section.getKeys(false)) {
 

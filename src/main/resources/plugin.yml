@@ -3,5 +3,14 @@ version: ${project.version}
 main: net.laboulangerie.townychat.TownyChat
 api-version: 1.17
 authors: [PainOchoco]
-depend: [Vault, Towny]
+depend: [Towny]
 softdepend: [PlaceholderAPI]
+commands:
+    chat:
+        permission: townychat.switch
+        description: Switch between channels
+        usage: /chat <channel>
+
+permissions:
+    townychat.switch:
+        default: true
