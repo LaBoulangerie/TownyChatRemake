@@ -1,8 +1,8 @@
 package net.laboulangerie.townychat.player;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -11,39 +11,39 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import net.kyori.adventure.text.Component;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
-import net.laboulangerie.townychat.commands.ShortcutCommand;
+import net.laboulangerie.townychat.channels.ChannelManager;
+import net.laboulangerie.townychat.channels.ChannelTypes;
 
 public class ChatPlayer {
     private UUID uniqueId;
 
     private FileConfiguration config;
+    private ChannelManager channelManager;
 
-    private HashMap<String, Channel> channels;
     private Channel currentChannel;
-    private HashSet<Channel> activeChannels;
+    private Map<ChannelTypes, Channel> channels;
+    private Set<Channel> activeChannels;
 
     public ChatPlayer(OfflinePlayer player) {
         this.uniqueId = player.getUniqueId();
 
-        config = TownyChat.PLUGIN.getConfig();
+        this.config = TownyChat.PLUGIN.getConfig();
+        this.channelManager = TownyChat.PLUGIN.getChannelManager();
+
+        this.channels = new HashMap<ChannelTypes, Channel>();
+        this.activeChannels = new HashSet<Channel>();
 
         loadChannels();
     }
 
     public UUID getUniqueId() {
         return this.uniqueId;
-    }
-
-    public Channel getChannel(String id) {
-        return this.channels.get(id);
     }
 
     public void setCurrentChannel(Channel channel) {
@@ -54,81 +54,61 @@ public class ChatPlayer {
         return this.currentChannel;
     }
 
-    public String toggleChannel(Channel channel) {
-        String message;
-        if (activeChannels.contains(channel)) {
-            activeChannels.remove(channel);
-            message = "Disabled " + channel.getName();
-        } else {
-            activeChannels.add(channel);
-            message = "Enabled " + channel.getName();
-        }
-
-        return message;
+    public Channel getChannel(ChannelTypes channelType) {
+        return this.channels.get(channelType);
     }
 
-    public HashMap<String, Channel> getChannels() {
+    public Map<ChannelTypes, Channel> getChannels() {
         return this.channels;
     }
 
-    public HashSet<Channel> getActiveChannels() {
+    public Set<Channel> getActiveChannels() {
         return this.activeChannels;
+    }
+
+    public boolean toggleChannel(ChannelTypes channelType) {
+        Channel channel = channels.get(channelType);
+        if (this.activeChannels.contains(channel)) {
+            activeChannels.remove(channel);
+            return false;
+        } else {
+            activeChannels.add(channel);
+            return true;
+        }
     }
 
     public void loadChannels() {
         ConfigurationSection channelsSection = config.getConfigurationSection("channels");
-        Set<String> channelIds = channelsSection.getKeys(false);
 
-        channels = new HashMap<String, Channel>();
-        activeChannels = new HashSet<Channel>();
+        this.activeChannels = new HashSet<Channel>();
 
-        for (String channelId : channelIds) {
-            Channel channel = new Channel(channelId,
-                    channelsSection.getString(channelId + ".name"),
-                    channelsSection.getString(channelId + ".format"));
+        Resident resident = TownyUniverse.getInstance().getResident(this.getUniqueId());
 
-            this.channels.put(channelId, channel);
-            this.activeChannels.add(channel);
+        Town town = resident.getTownOrNull();
+        Nation nation = resident.getNationOrNull();
 
-            String shortcutCommandName = channelsSection.getString(channelId + ".command");
-            if (shortcutCommandName != null) {
-                TownyChat.PLUGIN.registerCommand(shortcutCommandName, new ShortcutCommand(channel));
-            }
+        if (town != null && !(this.channelManager.getChannels().containsKey(town))) {
+
+            Channel townChannel = new Channel(ChannelTypes.TOWN, channelsSection.getString("town.name"),
+                    channelsSection.getString("town.format"));
+
+            this.activeChannels.add(townChannel);
+            this.channels.put(ChannelTypes.TOWN, townChannel);
+            this.channelManager.addChannel(town, townChannel);
         }
-        this.currentChannel = channels.get("general");
-    }
 
-    public void sendMessage(Component message) {
+        if (nation != null && !(this.channelManager.getChannels().containsKey(nation))) {
 
-        Resident resident = TownyChat.PLUGIN.getTownyAPI().getResident(this.getUniqueId());
+            Channel nationChannel = new Channel(ChannelTypes.NATION, channelsSection.getString("nation.name"),
+                    channelsSection.getString("nation.format"));
 
-        switch (this.getCurrentChannel().getId()) {
-            case "town":
-                Town town = resident.getTownOrNull();
-
-                if (town == null)
-                    return;
-
-                this.getCurrentChannel().sendMessage(Bukkit.getPlayer(this.getUniqueId()), town.getResidents(),
-                        message);
-                break;
-
-            case "nation":
-                Nation nation = resident.getNationOrNull();
-
-                if (nation == null)
-                    return;
-
-                this.getCurrentChannel().sendMessage(Bukkit.getPlayer(this.getUniqueId()), nation.getResidents(),
-                        message);
-                break;
-
-            case "general":
-                Collection<Resident> residents = TownyUniverse.getInstance().getResidents();
-                this.getCurrentChannel().sendMessage(Bukkit.getPlayer(this.getUniqueId()), residents, message);
-
-            default:
-                break;
+            this.activeChannels.add(nationChannel);
+            this.channels.put(ChannelTypes.NATION, nationChannel);
+            this.channelManager.addChannel(nation, nationChannel);
         }
+
+        Channel globalChannel = TownyChat.PLUGIN.getGlobalChannel();
+        this.channels.put(ChannelTypes.GLOBAL, globalChannel);
+        this.currentChannel = globalChannel;
     }
 }

@@ -31,8 +31,7 @@ public class TownyChatRenderer implements ChatRenderer {
 
     @Override
     public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName,
-            @NotNull Component message,
-            @NotNull Audience viewer) {
+            @NotNull Component message, @NotNull Audience viewers) {
 
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
         String channelFormat = chatPlayer.getCurrentChannel().getFormat();

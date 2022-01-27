@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.laboulangerie.townychat.TownyChat;
+import net.laboulangerie.townychat.channels.Channel;
+import net.laboulangerie.townychat.channels.ChannelTypes;
 import net.laboulangerie.townychat.player.ChatPlayer;
 import net.laboulangerie.townychat.player.ChatPlayerManager;
 
@@ -28,8 +30,11 @@ public class ToggleTownChatCommand implements CommandExecutor {
 
         Player player = (Player) sender;
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
-        String message = chatPlayer.toggleChannel(chatPlayer.getChannel("town"));
-        TownyMessaging.sendMsg(player, message);
+
+        boolean isEnabled = chatPlayer.toggleChannel(ChannelTypes.TOWN);
+        Channel townChannel = chatPlayer.getChannel(ChannelTypes.TOWN);
+
+        TownyMessaging.sendMsg(player, isEnabled ? "Enabled" : "Disabled" + townChannel.getName());
         return false;
     }
 

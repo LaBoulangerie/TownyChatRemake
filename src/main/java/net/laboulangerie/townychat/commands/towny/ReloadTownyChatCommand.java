@@ -21,8 +21,8 @@ public class ReloadTownyChatCommand implements CommandExecutor {
         ChatPlayerManager chatPlayerManager = TownyChat.PLUGIN.getChatPlayerManager();
         Bukkit.getOnlinePlayers().stream().forEach(
                 p -> {
-                    chatPlayerManager.unloadPlayer(p);
-                    chatPlayerManager.loadPlayer(p);
+                    chatPlayerManager.unloadChatPlayer(p);
+                    chatPlayerManager.loadChatPlayer(p);
                 });
 
         sender.sendMessage("§aReload complete!");

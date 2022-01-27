@@ -1,27 +1,17 @@
 package net.laboulangerie.townychat.channels;
 
-import java.util.Collection;
-
-import com.palmergames.bukkit.towny.object.Resident;
-
-import org.bukkit.entity.Player;
-
-import net.kyori.adventure.text.Component;
-import net.laboulangerie.townychat.TownyChat;
-import net.laboulangerie.townychat.core.TownyChatRenderer;
-import net.laboulangerie.townychat.player.ChatPlayer;
-
 public class Channel {
-    private String id, name, format;
+    private String name, format;
+    private ChannelTypes type;
 
-    public Channel(String id, String name, String tag) {
-        this.id = id;
+    public Channel(ChannelTypes type, String name, String format) {
+        this.type = type;
         this.name = name;
-        this.format = tag;
+        this.format = format;
     }
 
-    public String getId() {
-        return id;
+    public ChannelTypes getType() {
+        return type;
     }
 
     public String getName() {
@@ -30,22 +20,5 @@ public class Channel {
 
     public String getFormat() {
         return format;
-    }
-
-    public void sendMessage(Player source, Collection<Resident> residents, Component message) {
-        for (Resident res : residents) {
-            if (res != null && !res.isNPC() && res.isOnline()) {
-                ChatPlayer chatPlayer = TownyChat.PLUGIN.getChatPlayerManager().getChatPlayer(res.getPlayer());
-                Boolean isChannelActive = chatPlayer.getActiveChannels().contains(chatPlayer.getChannel(this.getId()));
-
-                if (isChannelActive) {
-                    TownyChatRenderer renderer = TownyChat.PLUGIN.getTownyChatRenderer();
-                    Component messageComponent = renderer.render(source,
-                            source.displayName(), message, source);
-
-                    res.getPlayer().sendMessage(messageComponent);
-                }
-            }
-        }
     }
 }

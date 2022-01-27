@@ -11,8 +11,8 @@
 # You can define custom templates in the section below
 # and be used them in channel formats like so: <TEMPLATE NAME> !
 channels:
-    general:
-        name: "General Chat"
+    global:
+        name: "Global Chat"
         format: "<town><nation><rank> <username> > <message>"
         command: "gc"
 

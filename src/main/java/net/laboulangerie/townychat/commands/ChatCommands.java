@@ -1,9 +1,9 @@
 package net.laboulangerie.townychat.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -22,6 +22,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
+import net.laboulangerie.townychat.channels.ChannelTypes;
 import net.laboulangerie.townychat.player.ChatPlayer;
 
 public class ChatCommands implements CommandExecutor, TabCompleter {
@@ -41,7 +42,9 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
         ChatPlayer chatPlayer = TownyChat.PLUGIN.getChatPlayerManager().getChatPlayer(player);
 
-        if (chatPlayer.getChannels().containsKey(args[0].toLowerCase())) {
+        if (TownyChat.PLUGIN.getConfig().getConfigurationSection("channels").getKeys(false)
+                .contains(args[0].toLowerCase())) {
+
             TownyAPI townyAPI = TownyChat.PLUGIN.getTownyAPI();
             Resident resident = townyAPI.getResident(player);
 
@@ -64,7 +67,7 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
                     break;
             }
 
-            Channel channel = chatPlayer.getChannel(args[0].toLowerCase());
+            Channel channel = chatPlayer.getChannel(ChannelTypes.valueOf(args[0].toUpperCase()));
             chatPlayer.setCurrentChannel(channel);
 
             String switchMessage = TownyChat.PLUGIN.getConfig().getString("lang.channel_switched");
@@ -77,9 +80,11 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
 
             return true;
         }
+
         String errorMessage = TownyChat.PLUGIN.getConfig().getString("lang.err_channel_not_found");
         TextComponent errorMessageComponent = (TextComponent) MiniMessage.get().parse(errorMessage,
                 Template.of("channel", args[0]));
+
         TownyMessaging.sendErrorMsg(sender, errorMessageComponent.content());
         return true;
     }
@@ -92,14 +97,12 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
             return null;
         }
 
-        Player player = (Player) sender;
-        ChatPlayer chatPlayer = TownyChat.PLUGIN.getChatPlayerManager().getChatPlayer(player);
-
-        List<String> channelIds = Lists.newArrayList(chatPlayer.getChannels().keySet());
+        List<String> channelTypes = new ArrayList<String>();
+        channelTypes.addAll(TownyChat.PLUGIN.getConfig().getConfigurationSection("channels").getKeys(false));
 
         return args.length == 1
-                ? channelIds.stream().filter(id -> id.toLowerCase().startsWith(args[0].toLowerCase()))
+                ? channelTypes.stream().filter(id -> id.toLowerCase().startsWith(args[0].toLowerCase()))
                         .collect(Collectors.toList())
-                : channelIds;
+                : channelTypes;
     }
 }
