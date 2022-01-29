@@ -35,8 +35,6 @@ Please contact `PainOchoco#3750` on Discord if you have any issues or requests!
 
 I'm open for suggestions, here is my current to do list:
 
--   Check for town/nation leave and set ChatPlayer#currentChannel to global channel
--   Same for town/nation deletion
 -   Add permission nodes for channel's shortcut commands
 -   Moderation commands :
     -   /mute
