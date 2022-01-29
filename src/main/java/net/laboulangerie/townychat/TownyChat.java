@@ -2,10 +2,10 @@ package net.laboulangerie.townychat;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
-import java.util.Set;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyCommandAddonAPI;
+import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.TownyCommandAddonAPI.CommandType;
 
 import org.bukkit.Bukkit;
@@ -25,6 +25,7 @@ import net.laboulangerie.townychat.commands.towny.ToggleNationChatCommand;
 import net.laboulangerie.townychat.commands.towny.ToggleTownChatCommand;
 import net.laboulangerie.townychat.core.TownyChatRenderer;
 import net.laboulangerie.townychat.listeners.TownyChatListener;
+import net.laboulangerie.townychat.listeners.TownyListener;
 import net.laboulangerie.townychat.player.ChatPlayerManager;
 
 public class TownyChat extends JavaPlugin {
@@ -34,16 +35,21 @@ public class TownyChat extends JavaPlugin {
     private ChannelManager channelManager;
     private TownyChatRenderer townyChatRenderer;
     private TownyAPI townyAPI;
+    private TownyUniverse townyUniverse;
     private Channel globalChannel;
 
     @Override
     public void onEnable() {
         TownyChat.PLUGIN = this;
 
+        this.globalChannel = new Channel(ChannelTypes.GLOBAL);
+
+        this.townyAPI = TownyAPI.getInstance();
+        this.townyUniverse = TownyUniverse.getInstance();
+
         this.channelManager = new ChannelManager();
         this.chatPlayerManager = new ChatPlayerManager();
         this.townyChatRenderer = new TownyChatRenderer();
-        this.townyAPI = TownyAPI.getInstance();
 
         this.saveDefaultConfig();
         this.registerListeners();
@@ -55,11 +61,6 @@ public class TownyChat extends JavaPlugin {
         TownyCommandAddonAPI.addSubCommand(CommandType.TOWNYADMIN, "reloadchat", new ReloadTownyChatCommand());
 
         this.registerShortcutCommands();
-
-        this.globalChannel = new Channel(
-                ChannelTypes.GLOBAL,
-                this.getConfig().getString("channels.global.name"),
-                this.getConfig().getString("channels.global.format"));
 
         getLogger().info("Plugin started");
     }
@@ -85,31 +86,30 @@ public class TownyChat extends JavaPlugin {
         return this.townyAPI;
     }
 
+    public TownyUniverse getTownyUniverse() {
+        return this.townyUniverse;
+    }
+
     public Channel getGlobalChannel() {
         return this.globalChannel;
     }
 
     private void registerListeners() {
-        Arrays.asList(new TownyChatListener())
-                .forEach(l -> this.getServer().getPluginManager().registerEvents(l, this));
+        Arrays.asList(
+                new TownyChatListener(),
+                new TownyListener()).forEach(l -> this.getServer().getPluginManager().registerEvents(l, this));
     }
 
     private void registerShortcutCommands() {
         ConfigurationSection channelsSection = this.getConfig().getConfigurationSection("channels");
-        Set<String> channelTypes = channelsSection.getKeys(false);
 
-        for (String channelType : channelTypes) {
-            Channel channel = new Channel(
-                    ChannelTypes.valueOf(channelType.toUpperCase()),
-                    channelsSection.getString(channelType + ".name"),
-                    channelsSection.getString(channelType + ".format"));
+        for (ChannelTypes channelType : ChannelTypes.values()) {
+            String shortcutCommandName = channelsSection.getString(channelType.name().toLowerCase() + ".command");
 
-            String shortcutCommandName = channelsSection.getString(channelType + ".command");
             if (shortcutCommandName != null) {
-                registerCommand(shortcutCommandName, new ShortcutCommand(channel));
+                registerCommand(shortcutCommandName, new ShortcutCommand(channelType));
             }
         }
-
     }
 
     public void registerCommand(String name, CommandExecutor executor) {

@@ -5,10 +5,13 @@ import com.palmergames.bukkit.towny.TownyMessaging;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
 import net.laboulangerie.townychat.channels.ChannelTypes;
@@ -34,7 +37,17 @@ public class ToggleNationChatCommand implements CommandExecutor {
         boolean isEnabled = chatPlayer.toggleChannel(ChannelTypes.NATION);
         Channel nationChannel = chatPlayer.getChannel(ChannelTypes.NATION);
 
-        TownyMessaging.sendMsg(player, isEnabled ? "Enabled" : "Disabled" + nationChannel.getName());
+        FileConfiguration config = TownyChat.PLUGIN.getConfig();
+
+        String enabled = config.getString("lang.enabled");
+        String disabled = config.getString("lang.disabled");
+        String toggledMessage = config.getString("lang.channel_toggled");
+
+        TextComponent toggledMessageComponent = (TextComponent) MiniMessage.get().parse(toggledMessage,
+                Template.of("channel", nationChannel.getName()),
+                Template.of("status", isEnabled ? enabled : disabled));
+
+        TownyMessaging.sendMsg(player, toggledMessageComponent.content());
         return false;
     }
 

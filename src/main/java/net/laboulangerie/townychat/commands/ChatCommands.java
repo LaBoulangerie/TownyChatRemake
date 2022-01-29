@@ -2,6 +2,7 @@ package net.laboulangerie.townychat.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.palmergames.bukkit.towny.TownyAPI;
@@ -42,8 +43,10 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
         ChatPlayer chatPlayer = TownyChat.PLUGIN.getChatPlayerManager().getChatPlayer(player);
 
-        if (TownyChat.PLUGIN.getConfig().getConfigurationSection("channels").getKeys(false)
-                .contains(args[0].toLowerCase())) {
+        Set<String> availableChannelsStrings = chatPlayer.getChannels().keySet().stream()
+                .map(c -> c.name().toLowerCase()).collect(Collectors.toSet());
+
+        if (availableChannelsStrings.contains(args[0])) {
 
             TownyAPI townyAPI = TownyChat.PLUGIN.getTownyAPI();
             Resident resident = townyAPI.getResident(player);
@@ -67,8 +70,10 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
                     break;
             }
 
-            Channel channel = chatPlayer.getChannel(ChannelTypes.valueOf(args[0].toUpperCase()));
-            chatPlayer.setCurrentChannel(channel);
+            ChannelTypes channelType = ChannelTypes.valueOf(args[0].toUpperCase());
+            chatPlayer.setCurrentChannel(channelType);
+
+            Channel channel = chatPlayer.getChannel(channelType);
 
             String switchMessage = TownyChat.PLUGIN.getConfig().getString("lang.channel_switched");
             TextComponent switchMessageComponent = (TextComponent) MiniMessage.get().parse(switchMessage,
@@ -97,8 +102,12 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
             return null;
         }
 
-        List<String> channelTypes = new ArrayList<String>();
-        channelTypes.addAll(TownyChat.PLUGIN.getConfig().getConfigurationSection("channels").getKeys(false));
+        Player player = (Player) sender;
+        ChatPlayer chatPlayer = TownyChat.PLUGIN.getChatPlayerManager().getChatPlayer(player);
+
+        List<String> channelTypes = new ArrayList<String>(
+                chatPlayer.getChannels().keySet().stream().map(c -> c.name().toLowerCase())
+                        .collect(Collectors.toList()));
 
         return args.length == 1
                 ? channelTypes.stream().filter(id -> id.toLowerCase().startsWith(args[0].toLowerCase()))

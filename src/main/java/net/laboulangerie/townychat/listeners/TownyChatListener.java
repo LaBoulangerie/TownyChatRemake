@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -18,7 +19,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 import net.laboulangerie.townychat.TownyChat;
+import net.laboulangerie.townychat.channels.Channel;
 import net.laboulangerie.townychat.core.TownyChatRenderer;
 import net.laboulangerie.townychat.player.ChatPlayer;
 import net.laboulangerie.townychat.player.ChatPlayerManager;
@@ -32,22 +37,31 @@ public class TownyChatListener implements Listener {
         this.townyChatRenderer = TownyChat.PLUGIN.getTownyChatRenderer();
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
-        if (event.isCancelled())
-            return;
-
         event.renderer(townyChatRenderer);
         event.viewers().clear();
 
         Player player = event.getPlayer();
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
+        Channel currentChannel = chatPlayer.getCurrentChannel();
+
+        if (!(chatPlayer.getActiveChannels().contains(currentChannel))) {
+            String errMessage = TownyChat.PLUGIN.getConfig().getString("lang.err_channel_disabled");
+            TextComponent switchMessageComponent = (TextComponent) MiniMessage.get().parse(errMessage,
+                    Template.of("channel", currentChannel.getType().name().toLowerCase()));
+
+            TownyMessaging.sendErrorMsg(player, switchMessageComponent.content());
+            event.setCancelled(true);
+            return;
+        }
+
         Resident resident = TownyChat.PLUGIN.getTownyAPI().getResident(player.getUniqueId());
 
         Set<Resident> recipients = new HashSet<>();
 
-        switch (chatPlayer.getCurrentChannel().getType()) {
+        switch (currentChannel.getType()) {
             case TOWN:
                 Town town = resident.getTownOrNull();
 

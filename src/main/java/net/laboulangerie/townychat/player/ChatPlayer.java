@@ -12,8 +12,6 @@ import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
@@ -23,7 +21,6 @@ import net.laboulangerie.townychat.channels.ChannelTypes;
 public class ChatPlayer {
     private UUID uniqueId;
 
-    private FileConfiguration config;
     private ChannelManager channelManager;
 
     private Channel currentChannel;
@@ -33,21 +30,20 @@ public class ChatPlayer {
     public ChatPlayer(OfflinePlayer player) {
         this.uniqueId = player.getUniqueId();
 
-        this.config = TownyChat.PLUGIN.getConfig();
         this.channelManager = TownyChat.PLUGIN.getChannelManager();
 
         this.channels = new HashMap<ChannelTypes, Channel>();
         this.activeChannels = new HashSet<Channel>();
 
-        loadChannels();
+        loadPlayerChannels();
     }
 
     public UUID getUniqueId() {
         return this.uniqueId;
     }
 
-    public void setCurrentChannel(Channel channel) {
-        this.currentChannel = channel;
+    public void setCurrentChannel(ChannelTypes channelType) {
+        this.currentChannel = this.channels.get(channelType);
     }
 
     public Channel getCurrentChannel() {
@@ -60,6 +56,17 @@ public class ChatPlayer {
 
     public Map<ChannelTypes, Channel> getChannels() {
         return this.channels;
+    }
+
+    public void addChannel(ChannelTypes channelType, Channel channel) {
+        this.activeChannels.add(channel);
+        this.channels.put(channelType, channel);
+    }
+
+    public void removeChannel(ChannelTypes channelType) {
+        Channel channel = getChannel(channelType);
+        this.activeChannels.remove(channel);
+        this.channels.remove(channelType);
     }
 
     public Set<Channel> getActiveChannels() {
@@ -77,37 +84,28 @@ public class ChatPlayer {
         }
     }
 
-    public void loadChannels() {
-        ConfigurationSection channelsSection = config.getConfigurationSection("channels");
-
-        this.activeChannels = new HashSet<Channel>();
-
+    private void loadPlayerChannels() {
         Resident resident = TownyUniverse.getInstance().getResident(this.getUniqueId());
 
         Town town = resident.getTownOrNull();
         Nation nation = resident.getNationOrNull();
 
-        if (town != null && !(this.channelManager.getChannels().containsKey(town))) {
-
-            Channel townChannel = new Channel(ChannelTypes.TOWN, channelsSection.getString("town.name"),
-                    channelsSection.getString("town.format"));
+        if (town != null && this.channelManager.getChannels().containsKey(town)) {
+            Channel townChannel = this.channelManager.getChannel(town);
 
             this.activeChannels.add(townChannel);
             this.channels.put(ChannelTypes.TOWN, townChannel);
-            this.channelManager.addChannel(town, townChannel);
         }
 
-        if (nation != null && !(this.channelManager.getChannels().containsKey(nation))) {
-
-            Channel nationChannel = new Channel(ChannelTypes.NATION, channelsSection.getString("nation.name"),
-                    channelsSection.getString("nation.format"));
+        if (nation != null && this.channelManager.getChannels().containsKey(nation)) {
+            Channel nationChannel = this.channelManager.getChannel(nation);
 
             this.activeChannels.add(nationChannel);
             this.channels.put(ChannelTypes.NATION, nationChannel);
-            this.channelManager.addChannel(nation, nationChannel);
         }
 
         Channel globalChannel = TownyChat.PLUGIN.getGlobalChannel();
+        this.activeChannels.add(globalChannel);
         this.channels.put(ChannelTypes.GLOBAL, globalChannel);
         this.currentChannel = globalChannel;
     }

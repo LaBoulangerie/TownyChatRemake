@@ -38,5 +38,10 @@ templates:
 
 lang:
     channel_switched: "Switched to <channel>"
+    disabled: "Disabled"
+    enabled: "Enabled"
+    # Status is either disabled or enabled.
+    channel_toggled: "<status> <channel>"
     err_channel_not_found: "Channel <channel> not found"
-    err_sender_not_player: "<red>Vous devez être en jeu pour exécuter la commande"
+    err_sender_not_player: "<red>You need to be in-game in order to do this!"
+    err_channel_disabled: "You disabled this channel! Use /<channel> toggle chat to enable it"

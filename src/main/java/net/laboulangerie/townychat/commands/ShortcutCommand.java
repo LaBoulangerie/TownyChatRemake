@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.laboulangerie.townychat.TownyChat;
-import net.laboulangerie.townychat.channels.Channel;
+import net.laboulangerie.townychat.channels.ChannelTypes;
 import net.laboulangerie.townychat.player.ChatPlayer;
 
 public class ShortcutCommand implements CommandExecutor {
-    private Channel channel;
+    private ChannelTypes channelType;
 
-    public ShortcutCommand(Channel channel) {
-        this.channel = channel;
+    public ShortcutCommand(ChannelTypes channelType) {
+        this.channelType = channelType;
     }
 
     @Override
@@ -32,10 +32,10 @@ public class ShortcutCommand implements CommandExecutor {
         Player player = (Player) sender;
         ChatPlayer chatPlayer = TownyChat.PLUGIN.getChatPlayerManager().getChatPlayer(player);
 
-        Channel previousChannel = chatPlayer.getCurrentChannel();
-        chatPlayer.setCurrentChannel(this.channel);
+        ChannelTypes previousChannelType = chatPlayer.getCurrentChannel().getType();
+        chatPlayer.setCurrentChannel(channelType);
         player.chat(message);
-        chatPlayer.setCurrentChannel(previousChannel);
+        chatPlayer.setCurrentChannel(previousChannelType);
 
         return true;
     }
