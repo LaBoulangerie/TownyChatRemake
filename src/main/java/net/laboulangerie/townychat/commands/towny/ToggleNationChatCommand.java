@@ -23,8 +23,10 @@ public class ToggleNationChatCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias,
             @NotNull String[] args) {
+        FileConfiguration config = TownyChat.PLUGIN.getConfig();
+
         if (!(sender instanceof Player)) {
-            String errorMessage = TownyChat.PLUGIN.getConfig().getString("lang.sender_not_player");
+            String errorMessage = config.getString("lang.sender_not_player");
             sender.sendMessage(MiniMessage.get().parse(errorMessage));
             return true;
         }
@@ -37,17 +39,15 @@ public class ToggleNationChatCommand implements CommandExecutor {
         boolean isEnabled = chatPlayer.toggleChannel(ChannelTypes.NATION);
         Channel nationChannel = chatPlayer.getChannel(ChannelTypes.NATION);
 
-        FileConfiguration config = TownyChat.PLUGIN.getConfig();
-
         String enabled = config.getString("lang.enabled");
         String disabled = config.getString("lang.disabled");
         String toggledMessage = config.getString("lang.channel_toggled");
 
-        TextComponent toggledMessageComponent = (TextComponent) MiniMessage.get().parse(toggledMessage,
+        TextComponent messageComponent = (TextComponent) MiniMessage.get().parse(toggledMessage,
                 Template.of("channel", nationChannel.getName()),
                 Template.of("status", isEnabled ? enabled : disabled));
 
-        TownyMessaging.sendMsg(player, toggledMessageComponent.content());
+        TownyMessaging.sendMsg(player, messageComponent.content());
         return false;
     }
 
