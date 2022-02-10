@@ -35,7 +35,6 @@ Please contact `PainOchoco#3750` on Discord if you have any issues or requests!
 
 I'm open for suggestions, here is my current to do list:
 
--   Add permission nodes for channel's shortcut commands
 -   Moderation commands :
     -   /mute
     -   /spy
