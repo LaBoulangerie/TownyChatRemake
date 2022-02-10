@@ -27,6 +27,8 @@ public class ChatPlayer {
     private Map<ChannelTypes, Channel> channels;
     private Set<Channel> activeChannels;
 
+    private Boolean isSpying;
+
     public ChatPlayer(OfflinePlayer player) {
         this.uniqueId = player.getUniqueId();
 
@@ -34,6 +36,8 @@ public class ChatPlayer {
 
         this.channels = new HashMap<ChannelTypes, Channel>();
         this.activeChannels = new HashSet<Channel>();
+
+        this.isSpying = false;
 
         loadPlayerChannels();
     }
@@ -61,6 +65,14 @@ public class ChatPlayer {
     public void addChannel(ChannelTypes channelType, Channel channel) {
         this.activeChannels.add(channel);
         this.channels.put(channelType, channel);
+    }
+
+    public Boolean isSpying() {
+        return this.isSpying;
+    }
+
+    public void setSpying(Boolean isSpying) {
+        this.isSpying = isSpying;
     }
 
     public void removeChannel(ChannelTypes channelType) {

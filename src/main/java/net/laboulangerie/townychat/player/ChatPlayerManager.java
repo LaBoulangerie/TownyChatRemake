@@ -2,7 +2,9 @@ package net.laboulangerie.townychat.player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -27,5 +29,9 @@ public class ChatPlayerManager {
 
     public ChatPlayer getChatPlayer(Player player) {
         return this.playersMap.get(player.getUniqueId());
+    }
+
+    public Set<ChatPlayer> getSpies() {
+        return playersMap.values().stream().filter(ChatPlayer::isSpying).collect(Collectors.toSet());
     }
 }

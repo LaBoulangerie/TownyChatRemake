@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Nation;
@@ -18,12 +19,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
+import net.laboulangerie.townychat.channels.ChannelTypes;
 import net.laboulangerie.townychat.core.TownyChatRenderer;
 import net.laboulangerie.townychat.player.ChatPlayer;
 import net.laboulangerie.townychat.player.ChatPlayerManager;
@@ -31,15 +34,17 @@ import net.laboulangerie.townychat.player.ChatPlayerManager;
 public class TownyChatListener implements Listener {
     private ChatPlayerManager chatPlayerManager;
     private TownyChatRenderer townyChatRenderer;
+    private TownyAPI townyAPI;
 
     public TownyChatListener() {
         this.chatPlayerManager = TownyChat.PLUGIN.getChatPlayerManager();
         this.townyChatRenderer = TownyChat.PLUGIN.getTownyChatRenderer();
+        this.townyAPI = TownyChat.PLUGIN.getTownyAPI();
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
-        event.renderer(townyChatRenderer);
+        event.renderer(ChatRenderer.viewerUnaware(townyChatRenderer));
         event.viewers().clear();
 
         Player player = event.getPlayer();
@@ -49,6 +54,7 @@ public class TownyChatListener implements Listener {
 
         if (!(chatPlayer.getActiveChannels().contains(currentChannel))) {
             String errMessage = TownyChat.PLUGIN.getConfig().getString("lang.err_channel_disabled");
+
             TextComponent switchMessageComponent = (TextComponent) MiniMessage.get().parse(errMessage,
                     Template.of("channel", currentChannel.getType().name().toLowerCase()));
 
@@ -57,7 +63,17 @@ public class TownyChatListener implements Listener {
             return;
         }
 
-        Resident resident = TownyChat.PLUGIN.getTownyAPI().getResident(player.getUniqueId());
+        Resident resident = townyAPI.getResident(player.getUniqueId());
+
+        if (chatPlayer.getCurrentChannel().getType() != ChannelTypes.GLOBAL) {
+            for (ChatPlayer spy : chatPlayerManager.getSpies()) {
+                Player spyPlayer = Bukkit.getPlayer(spy.getUniqueId());
+
+                if (shouldSpy(spyPlayer, player)) {
+                    spyPlayer.sendMessage(townyChatRenderer.spyRender(player, event.message()));
+                }
+            }
+        }
 
         Set<Resident> recipients = new HashSet<>();
 
@@ -89,6 +105,14 @@ public class TownyChatListener implements Listener {
         event.viewers().addAll(
                 recipients.stream().map(Resident::getPlayer).filter(Objects::nonNull).collect(Collectors.toSet()));
         event.viewers().add(Bukkit.getConsoleSender());
+    }
+
+    private Boolean shouldSpy(Player spy, Player spied) {
+        Resident spyRes = townyAPI.getResident(spy.getUniqueId());
+        Resident spiedRes = townyAPI.getResident(spied.getUniqueId());
+
+        return spyRes.getTownOrNull() != spiedRes.getTownOrNull()
+                || spyRes.getNationOrNull() != spiedRes.getNationOrNull();
     }
 
     @EventHandler

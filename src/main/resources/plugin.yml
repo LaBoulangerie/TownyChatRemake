@@ -10,7 +10,22 @@ commands:
         permission: townychat.switch
         description: Switch between channels
         usage: /chat <channel>
+    spy:
+        permission: townychat.spy
+        description: Spy on every town and nations channels
+        usage: /spy
 
 permissions:
     townychat.switch:
         default: true
+    townychat.spy:
+        default: op
+    townychat.format:
+        default: op
+
+    townychat.*:
+        default: op
+        children:
+            townychat.switch: true
+            townychat.spy: true
+            townychat.format: true

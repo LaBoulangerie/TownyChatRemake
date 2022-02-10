@@ -20,6 +20,7 @@ import net.laboulangerie.townychat.channels.ChannelManager;
 import net.laboulangerie.townychat.channels.ChannelTypes;
 import net.laboulangerie.townychat.commands.ChatCommands;
 import net.laboulangerie.townychat.commands.ShortcutCommand;
+import net.laboulangerie.townychat.commands.SpyCommand;
 import net.laboulangerie.townychat.commands.towny.ReloadTownyChatCommand;
 import net.laboulangerie.townychat.commands.towny.ToggleNationChatCommand;
 import net.laboulangerie.townychat.commands.towny.ToggleTownChatCommand;
@@ -55,6 +56,7 @@ public class TownyChat extends JavaPlugin {
         this.registerListeners();
 
         this.getCommand("chat").setExecutor(new ChatCommands());
+        this.getCommand("spy").setExecutor(new SpyCommand());
 
         TownyCommandAddonAPI.addSubCommand(CommandType.TOWN_TOGGLE, "chat", new ToggleTownChatCommand());
         TownyCommandAddonAPI.addSubCommand(CommandType.NATION_TOGGLE, "chat", new ToggleNationChatCommand());

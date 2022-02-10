@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import io.papermc.paper.chat.ChatRenderer;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -20,7 +19,7 @@ import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.player.ChatPlayer;
 import net.laboulangerie.townychat.player.ChatPlayerManager;
 
-public class TownyChatRenderer implements ChatRenderer {
+public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
     private FileConfiguration config;
     private ChatPlayerManager chatPlayerManager;
 
@@ -31,7 +30,7 @@ public class TownyChatRenderer implements ChatRenderer {
 
     @Override
     public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName,
-            @NotNull Component message, @NotNull Audience viewers) {
+            @NotNull Component message) {
 
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
         String channelFormat = chatPlayer.getCurrentChannel().getFormat();
@@ -44,11 +43,29 @@ public class TownyChatRenderer implements ChatRenderer {
         return parsedComponent;
     }
 
+    // TODO : Remove redundant method, but how???
+    public @NotNull Component spyRender(@NotNull Player source, @NotNull Component message) {
+
+        ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
+        String channelFormat = chatPlayer.getCurrentChannel().getSpyFormat();
+
+        String papiFormat = PlaceholderAPI.setPlaceholders(source, channelFormat);
+        List<Template> templates = parseTemplates(source, message);
+
+        Component parsedComponent = MiniMessage.get().parse(papiFormat, templates);
+
+        return parsedComponent;
+    }
+
     private List<Template> parseTemplates(Player player, Component message) {
         ConfigurationSection section = config.getConfigurationSection("templates");
 
-        TextComponent textMessage = (TextComponent) message;
-        Component messageComponent = MiniMessage.get().parse(textMessage.content());
+        Component messageComponent = message;
+
+        if (player.hasPermission("townychat.format")) {
+            TextComponent textMessage = (TextComponent) message;
+            messageComponent = MiniMessage.get().parse(textMessage.content());
+        }
 
         ArrayList<Template> templates = new ArrayList<>(Arrays.asList(
                 Template.of("message", messageComponent)));

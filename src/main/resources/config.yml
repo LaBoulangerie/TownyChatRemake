@@ -19,15 +19,19 @@ channels:
     town:
         name: "Town Chat"
         format: "<aqua><bold>TC</bold></aqua> <rank> <username> <aqua>> <message>"
+        spy_format: "<spy_prefix> <town> <username> <dark_purple>> <message>"
         command: "tc"
 
     nation:
         name: "Nation Chat"
         format: "<gold><bold>NC</bold></gold> <town><rank> <username> <gold>> <message>"
+        spy_format: "<spy_prefix> <nation> <username> <purple>> <message>"
         command: "nc"
 
 # You can use PAPI's placeholders and MiniMessage syntax here too!
 templates:
+    spy_prefix: "<dark_purple><bold>SPY</bold></dark_purple>"
+
     rank: "%townyadvanced_towny_colour%%townyadvanced_player_status%"
 
     username: "%townyadvanced_towny_colour%%player_name%"
@@ -42,6 +46,7 @@ lang:
     enabled: "Enabled"
     # Status is either disabled or enabled.
     channel_toggled: "<status> <channel>"
+    spying_toggled: "Spying is <status>"
     err_channel_not_found: "Channel <channel> not found"
     err_sender_not_player: "<red>You need to be in-game in order to do this!"
     err_channel_disabled: "You disabled this channel! Use /<channel> toggle chat to enable it"
