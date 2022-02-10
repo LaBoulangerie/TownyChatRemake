@@ -37,4 +37,3 @@ I'm open for suggestions, here is my current to do list:
 
 -   Moderation commands :
     -   /mute
-    -   /spy
