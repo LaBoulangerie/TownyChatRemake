@@ -5,7 +5,7 @@ import net.laboulangerie.townychat.TownyChat;
 
 public class Channel {
 
-    private String name, format;
+    private String name, format, spyFormat;
     private ChannelTypes type;
 
     public Channel(ChannelTypes type) {
@@ -18,6 +18,7 @@ public class Channel {
 
         this.name = channelSection.getString("name");
         this.format = channelSection.getString("format");
+        this.spyFormat = channelSection.getString("spy_format");
     }
 
     public ChannelTypes getType() {
@@ -30,5 +31,9 @@ public class Channel {
 
     public String getFormat() {
         return format;
+    }
+
+    public String getSpyFormat() {
+        return spyFormat;
     }
 }
