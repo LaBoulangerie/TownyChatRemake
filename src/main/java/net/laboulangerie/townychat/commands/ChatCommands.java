@@ -75,6 +75,10 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
 
             Channel channel = chatPlayer.getChannel(channelType);
 
+            if (!(chatPlayer.getActiveChannels().contains(channel))) {
+                chatPlayer.toggleChannel(channelType);
+            }
+
             String switchMessage = TownyChat.PLUGIN.getConfig().getString("lang.channel_switched");
             TextComponent switchMessageComponent = (TextComponent) MiniMessage.get().parse(switchMessage,
                     Template.of("channel", channel.getName()));
