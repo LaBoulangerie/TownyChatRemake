@@ -42,6 +42,7 @@ public class TownyChat extends JavaPlugin {
     @Override
     public void onEnable() {
         TownyChat.PLUGIN = this;
+        this.saveDefaultConfig();
 
         this.globalChannel = new Channel(ChannelTypes.GLOBAL);
 
@@ -52,7 +53,6 @@ public class TownyChat extends JavaPlugin {
         this.chatPlayerManager = new ChatPlayerManager();
         this.townyChatRenderer = new TownyChatRenderer();
 
-        this.saveDefaultConfig();
         this.registerListeners();
 
         this.getCommand("chat").setExecutor(new ChatCommands());
@@ -60,7 +60,7 @@ public class TownyChat extends JavaPlugin {
 
         TownyCommandAddonAPI.addSubCommand(CommandType.TOWN_TOGGLE, "chat", new ToggleTownChatCommand());
         TownyCommandAddonAPI.addSubCommand(CommandType.NATION_TOGGLE, "chat", new ToggleNationChatCommand());
-        TownyCommandAddonAPI.addSubCommand(CommandType.TOWNYADMIN, "reloadchat", new ReloadTownyChatCommand());
+        TownyCommandAddonAPI.addSubCommand(CommandType.TOWNYADMIN_RELOAD, "chat", new ReloadTownyChatCommand());
 
         this.registerShortcutCommands();
 
