@@ -2,10 +2,10 @@ package net.laboulangerie.townychat.listeners;
 
 import com.palmergames.bukkit.towny.event.NewNationEvent;
 import com.palmergames.bukkit.towny.event.NewTownEvent;
-import com.palmergames.bukkit.towny.event.PlayerLeaveTownEvent;
 import com.palmergames.bukkit.towny.event.PreDeleteNationEvent;
 import com.palmergames.bukkit.towny.event.PreDeleteTownEvent;
 import com.palmergames.bukkit.towny.event.TownAddResidentEvent;
+import com.palmergames.bukkit.towny.event.TownRemoveResidentEvent;
 import com.palmergames.bukkit.towny.event.nation.NationPreTownLeaveEvent;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -32,18 +32,18 @@ public class TownyListener implements Listener {
         this.channelManager = TownyChat.PLUGIN.getChannelManager();
     }
 
-    @EventHandler()
-    public void onPlayerLeaveTown(PlayerLeaveTownEvent event) {
-        Player player = event.getPlayer();
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onTownRemoveResident(TownRemoveResidentEvent event) {
+        Player player = event.getResident().getPlayer();
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
         Channel currentChannel = chatPlayer.getCurrentChannel();
-        Channel townChannel = channelManager.getChannel(event.getLefttown());
 
-        if (currentChannel == townChannel) {
+        if (currentChannel.getType() == ChannelTypes.TOWN) {
             chatPlayer.setCurrentChannel(ChannelTypes.GLOBAL);
-            chatPlayer.removeChannel(ChannelTypes.TOWN);
         }
+
+        chatPlayer.removeChannel(ChannelTypes.TOWN);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -56,12 +56,12 @@ public class TownyListener implements Listener {
             ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             Channel currentChannel = chatPlayer.getCurrentChannel();
-            Channel nationChannel = channelManager.getChannel(event.getNation());
 
-            if (currentChannel == nationChannel) {
+            if (currentChannel.getType() == ChannelTypes.NATION) {
                 chatPlayer.setCurrentChannel(ChannelTypes.GLOBAL);
-                chatPlayer.removeChannel(ChannelTypes.NATION);
             }
+
+            chatPlayer.removeChannel(ChannelTypes.NATION);
         }
     }
 
@@ -75,12 +75,12 @@ public class TownyListener implements Listener {
             ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             Channel currentChannel = chatPlayer.getCurrentChannel();
-            Channel townChannel = channelManager.getChannel(town);
 
-            if (currentChannel == townChannel) {
+            if (currentChannel.getType() == ChannelTypes.TOWN) {
                 chatPlayer.setCurrentChannel(ChannelTypes.GLOBAL);
-                chatPlayer.removeChannel(ChannelTypes.TOWN);
             }
+
+            chatPlayer.removeChannel(ChannelTypes.TOWN);
         }
 
         channelManager.removeChannel(town);
@@ -96,18 +96,18 @@ public class TownyListener implements Listener {
             ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             Channel currentChannel = chatPlayer.getCurrentChannel();
-            Channel nationChannel = channelManager.getChannel(nation);
 
-            if (currentChannel == nationChannel) {
+            if (currentChannel.getType() == ChannelTypes.NATION) {
                 chatPlayer.setCurrentChannel(ChannelTypes.GLOBAL);
-                chatPlayer.removeChannel(ChannelTypes.NATION);
             }
+
+            chatPlayer.removeChannel(ChannelTypes.NATION);
         }
         channelManager.removeChannel(nation);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onTownCreate(NewTownEvent event) {
+    public void onNewTown(NewTownEvent event) {
         Town town = event.getTown();
 
         Channel newTownChannel = new Channel(ChannelTypes.TOWN);
@@ -121,7 +121,7 @@ public class TownyListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onNationCreate(NewNationEvent event) {
+    public void onNewNation(NewNationEvent event) {
         Nation nation = event.getNation();
 
         Channel newNationChannel = new Channel(ChannelTypes.NATION);
@@ -140,8 +140,16 @@ public class TownyListener implements Listener {
         Player player = event.getResident().getPlayer();
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
-        Channel townChannel = new Channel(ChannelTypes.TOWN);
-        channelManager.addChannel(event.getTown(), townChannel);
+        Town town = event.getTown();
+        Channel townChannel = channelManager.getChannel(town);
         chatPlayer.addChannel(ChannelTypes.TOWN, townChannel);
+
+        if (town.hasNation()) {
+            Nation nation = town.getNationOrNull();
+            Channel nationChannel = channelManager.getChannel(nation);
+
+            chatPlayer.addChannel(ChannelTypes.NATION, nationChannel);
+
+        }
     }
 }
