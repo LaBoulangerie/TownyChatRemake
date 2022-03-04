@@ -18,18 +18,20 @@ channels:
 
     town:
         name: "Town Chat"
-        format: "<aqua><bold>TC</bold></aqua> <rank> <username> <aqua>> <message>"
-        spy_format: "<spy_prefix> <town> <username> <dark_purple>> <message>"
+        format: "<town_prefix> <rank> <username> <aqua>> <message>"
+        spy_format: "<spy_prefix> <town_prefix> <town> <username> <dark_purple>> <message>"
         command: "tc"
 
     nation:
         name: "Nation Chat"
-        format: "<gold><bold>NC</bold></gold> <town><rank> <username> <gold>> <message>"
-        spy_format: "<spy_prefix> <nation> <username> <purple>> <message>"
+        format: "<nation_prefix> <town><rank> <username> <gold>> <message>"
+        spy_format: "<spy_prefix> <nation_prefix> <nation> <username> <purple>> <message>"
         command: "nc"
 
 # You can use PAPI's placeholders and MiniMessage syntax here too!
 templates:
+    town_prefix: "<aqua><bold>TC</bold></aqua>"
+    nation_prefix: "<gold><bold>NC</bold></gold>"
     spy_prefix: "<dark_purple><bold>SPY</bold></dark_purple>"
 
     rank: "%townyadvanced_towny_colour%%townyadvanced_player_status%"
