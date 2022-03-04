@@ -14,11 +14,11 @@ TownyChatRemake is a simple yet fully customizable chat plugin that syncs with [
 -   `/town toggle chat` - Toggle town chat
 -   `/nation toggle chat` - Toggle nation chat
 -   `/gc` `/tc` `/nc` - Channel shortcut commands, e.g. `/tc hi town!`, can be modified in the config.
--   `/ta reloadchat` - Reload config, will change to `/ta reload chat` on the next Towny release.
+-   `/ta reload chat` - Reload config
 
 ### Permissions
 
--   `townychat.chat` - Default permission to switch channel
+-   `townychat.chat` - Default permission to switch channels
 
 ### ⚙️ Recommended Towny Settings
 
@@ -35,5 +35,6 @@ Please contact `PainOchoco#3750` on Discord if you have any issues or requests!
 
 I'm open for suggestions, here is my current to do list:
 
+-   Fix reload config command
 -   Moderation commands :
     -   /mute
