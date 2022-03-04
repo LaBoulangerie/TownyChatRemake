@@ -102,6 +102,11 @@ public class TownyChatListener implements Listener {
                 break;
         }
 
+        // Removes players that disabled this channel
+        recipients.removeIf(
+                r -> !(chatPlayerManager.getChatPlayer(r.getPlayer()).getActiveChannels().contains(currentChannel)));
+
+        // Filters null objects
         event.viewers().addAll(
                 recipients.stream().map(Resident::getPlayer).filter(Objects::nonNull).collect(Collectors.toSet()));
         event.viewers().add(Bukkit.getConsoleSender());
