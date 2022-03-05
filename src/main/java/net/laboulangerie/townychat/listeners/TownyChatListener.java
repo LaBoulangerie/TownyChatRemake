@@ -75,7 +75,7 @@ public class TownyChatListener implements Listener {
             }
         }
 
-        Set<Resident> recipients = new HashSet<>();
+        Set<Resident> residents = new HashSet<>();
 
         switch (currentChannel.getType()) {
             case TOWN:
@@ -84,7 +84,7 @@ public class TownyChatListener implements Listener {
                 if (town == null)
                     return;
 
-                recipients.addAll(town.getResidents());
+                residents.addAll(town.getResidents());
                 break;
 
             case NATION:
@@ -93,22 +93,24 @@ public class TownyChatListener implements Listener {
                 if (nation == null)
                     return;
 
-                recipients.addAll(nation.getResidents());
+                residents.addAll(nation.getResidents());
                 break;
 
             case GLOBAL:
-                recipients.addAll(TownyUniverse.getInstance().getResidents());
+                residents.addAll(TownyUniverse.getInstance().getResidents());
             default:
                 break;
         }
 
+        Set<Player> recipients = residents.stream().map(Resident::getPlayer).filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
         // Removes players that disabled this channel
         recipients.removeIf(
-                r -> !(chatPlayerManager.getChatPlayer(r.getPlayer()).getActiveChannels().contains(currentChannel)));
+                p -> !(chatPlayerManager.getChatPlayer(p).getActiveChannels()
+                        .contains(currentChannel)));
 
-        // Filters null objects
-        event.viewers().addAll(
-                recipients.stream().map(Resident::getPlayer).filter(Objects::nonNull).collect(Collectors.toSet()));
+        event.viewers().addAll(recipients);
         event.viewers().add(Bukkit.getConsoleSender());
     }
 
