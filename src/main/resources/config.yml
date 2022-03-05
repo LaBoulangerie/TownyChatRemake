@@ -52,3 +52,8 @@ lang:
     err_channel_not_found: "Channel <channel> not found"
     err_sender_not_player: "<red>You need to be in-game in order to do this!"
     err_channel_disabled: "You disabled this channel! Use /<channel> toggle chat to enable it"
+
+blacklist:
+    - "chocolatine"
+    - "fuck"
+    - "shit"

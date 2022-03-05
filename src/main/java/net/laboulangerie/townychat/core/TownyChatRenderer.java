@@ -3,6 +3,9 @@ package net.laboulangerie.townychat.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,6 +18,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.player.ChatPlayer;
 import net.laboulangerie.townychat.player.ChatPlayerManager;
@@ -34,6 +38,8 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
 
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
         String channelFormat = chatPlayer.getCurrentChannel().getFormat();
+
+        message = Component.text(censorString(PlainTextComponentSerializer.plainText().serialize(message)));
 
         String papiFormat = PlaceholderAPI.setPlaceholders(source, channelFormat);
         List<Template> templates = parseTemplates(source, message);
@@ -79,5 +85,22 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
         }
 
         return templates;
+    }
+
+    // TODO: Might replace this with a regex matching every words in the blacklist
+    private String censorString(String string) {
+        List<String> words = config.getStringList("blacklist");
+        String[] censorChars = { "#", "@", "!", "*" };
+
+        for (String word : words) {
+            // Not readable to say the least but i like it
+            // It generates a random string e.g. insult -> !#@!*#
+            // Yes it's overcomplicated but it looks cool :)
+            string = string.replaceAll("(?i)" + Pattern.quote(word),
+                    new Random().ints(word.length(), 0, censorChars.length).mapToObj(i -> censorChars[i])
+                            .collect(Collectors.joining()));
+        }
+
+        return string;
     }
 }
