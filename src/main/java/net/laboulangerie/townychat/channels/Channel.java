@@ -5,20 +5,17 @@ import net.laboulangerie.townychat.TownyChat;
 
 public class Channel {
 
-    private String name, format, spyFormat;
     private ChannelTypes type;
+    private ConfigurationSection channelSection;
 
     public Channel(ChannelTypes type) {
         this.type = type;
 
         String typeString = type.name().toLowerCase();
 
-        ConfigurationSection channelSection = TownyChat.PLUGIN.getConfig()
+        this.channelSection = TownyChat.PLUGIN.getConfig()
                 .getConfigurationSection("channels." + typeString);
 
-        this.name = channelSection.getString("name");
-        this.format = channelSection.getString("format");
-        this.spyFormat = channelSection.getString("spy_format");
     }
 
     public ChannelTypes getType() {
@@ -26,14 +23,14 @@ public class Channel {
     }
 
     public String getName() {
-        return name;
+        return channelSection.getString("name");
     }
 
     public String getFormat() {
-        return format;
+        return channelSection.getString("format");
     }
 
     public String getSpyFormat() {
-        return spyFormat;
+        return channelSection.getString("spy_format");
     }
 }
