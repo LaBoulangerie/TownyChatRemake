@@ -1,19 +1,16 @@
 package net.laboulangerie.townychat.core;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import io.papermc.paper.chat.ChatRenderer;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -26,10 +23,12 @@ import net.laboulangerie.townychat.player.ChatPlayerManager;
 public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
     private FileConfiguration config;
     private ChatPlayerManager chatPlayerManager;
+    private ComponentRenderer componentRenderer;
 
     public TownyChatRenderer() {
         this.config = TownyChat.PLUGIN.getConfig();
         this.chatPlayerManager = TownyChat.PLUGIN.getChatPlayerManager();
+        this.componentRenderer = TownyChat.PLUGIN.getComponentRenderer();
     }
 
     @Override
@@ -41,12 +40,14 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
 
         message = Component.text(censorString(PlainTextComponentSerializer.plainText().serialize(message)));
 
-        String papiFormat = PlaceholderAPI.setPlaceholders(source, channelFormat);
-        List<Template> templates = parseTemplates(source, message);
+        if (source.hasPermission("townychat.format")) {
+            TextComponent textMessage = (TextComponent) message;
+            message = MiniMessage.get().parse(textMessage.content());
+        }
 
-        Component parsedComponent = MiniMessage.get().parse(papiFormat, templates);
-
-        return parsedComponent;
+        return componentRenderer.parse(source, channelFormat, Arrays.asList(
+                Template.of("message",
+                        message)));
     }
 
     // TODO : Remove redundant method, but how???
@@ -55,36 +56,13 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
         String channelFormat = chatPlayer.getCurrentChannel().getSpyFormat();
 
-        String papiFormat = PlaceholderAPI.setPlaceholders(source, channelFormat);
-        List<Template> templates = parseTemplates(source, message);
-
-        Component parsedComponent = MiniMessage.get().parse(papiFormat, templates);
-
-        return parsedComponent;
-    }
-
-    private List<Template> parseTemplates(Player player, Component message) {
-        ConfigurationSection section = config.getConfigurationSection("templates");
-
-        Component messageComponent = message;
-
-        if (player.hasPermission("townychat.format")) {
+        if (source.hasPermission("townychat.format")) {
             TextComponent textMessage = (TextComponent) message;
-            messageComponent = MiniMessage.get().parse(textMessage.content());
+            message = MiniMessage.get().parse(textMessage.content());
         }
 
-        ArrayList<Template> templates = new ArrayList<>(Arrays.asList(
-                Template.of("message", messageComponent)));
-
-        for (String key : section.getKeys(false)) {
-
-            String string = PlaceholderAPI.setPlaceholders(player, section.getString(key));
-            Component component = MiniMessage.get().parse(string);
-
-            templates.add(Template.of(key, component));
-        }
-
-        return templates;
+        return componentRenderer.parse(source, channelFormat, Arrays.asList(
+                Template.of("message", message)));
     }
 
     // TODO: Might replace this with a regex matching every words in the blacklist

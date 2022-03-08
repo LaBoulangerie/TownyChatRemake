@@ -24,7 +24,9 @@ import net.laboulangerie.townychat.commands.SpyCommand;
 import net.laboulangerie.townychat.commands.towny.ReloadTownyChatCommand;
 import net.laboulangerie.townychat.commands.towny.ToggleNationChatCommand;
 import net.laboulangerie.townychat.commands.towny.ToggleTownChatCommand;
+import net.laboulangerie.townychat.core.ComponentRenderer;
 import net.laboulangerie.townychat.core.TownyChatRenderer;
+import net.laboulangerie.townychat.listeners.MiscListener;
 import net.laboulangerie.townychat.listeners.TownyChatListener;
 import net.laboulangerie.townychat.listeners.TownyListener;
 import net.laboulangerie.townychat.player.ChatPlayerManager;
@@ -34,6 +36,7 @@ public class TownyChat extends JavaPlugin {
 
     private ChatPlayerManager chatPlayerManager;
     private ChannelManager channelManager;
+    private ComponentRenderer componentRenderer;
     private TownyChatRenderer townyChatRenderer;
     private TownyAPI townyAPI;
     private TownyUniverse townyUniverse;
@@ -50,6 +53,7 @@ public class TownyChat extends JavaPlugin {
         this.townyUniverse = TownyUniverse.getInstance();
 
         this.channelManager = new ChannelManager();
+        this.componentRenderer = new ComponentRenderer();
         this.chatPlayerManager = new ChatPlayerManager();
         this.townyChatRenderer = new TownyChatRenderer();
 
@@ -80,6 +84,10 @@ public class TownyChat extends JavaPlugin {
         return this.channelManager;
     }
 
+    public ComponentRenderer getComponentRenderer() {
+        return this.componentRenderer;
+    }
+
     public TownyChatRenderer getTownyChatRenderer() {
         return this.townyChatRenderer;
     }
@@ -99,6 +107,7 @@ public class TownyChat extends JavaPlugin {
     private void registerListeners() {
         Arrays.asList(
                 new TownyChatListener(),
+                new MiscListener(),
                 new TownyListener()).forEach(l -> this.getServer().getPluginManager().registerEvents(l, this));
     }
 
