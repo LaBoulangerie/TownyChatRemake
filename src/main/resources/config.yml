@@ -46,7 +46,7 @@ lang:
     channel_switched: "Switched to <channel>"
     disabled: "Disabled"
     enabled: "Enabled"
-    # Status is either disabled or enabled.
+    # Status is either disabled or enabled ^
     channel_toggled: "<status> <channel>"
     spying_toggled: "Spying is <status>"
     err_channel_not_found: "Channel <channel> not found"
@@ -57,3 +57,13 @@ blacklist:
     - "chocolatine"
     - "fuck"
     - "shit"
+
+# MiniMessage, Placeholders and Templates can be used here
+misc:
+    join_message: "<green>→</green> <rank> <username>"
+    quit_message: "<red>←</red> <rank> <username>"
+    advancement:
+        # <advancement_title> and <advancement_description> can be used.
+        challenge: "<dark_purple>✽ <username> has made the advancement <bold><hover:show_text:'<dark_purple>a<advancement_description>'><advancement_title>"
+        goal: "<gold>✸ <username> has made the advancement <bold><hover:show_text:'<gold>a<advancement_description>'><advancement_title>"
+        task: "<yellow>✦ <username> has made the advancement <bold><hover:show_text:'<yellow>a<advancement_description>'><advancement_title>"
