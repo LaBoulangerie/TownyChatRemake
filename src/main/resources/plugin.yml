@@ -1,7 +1,7 @@
 name: TownyChatRemake
 version: ${project.version}
 main: net.laboulangerie.townychat.TownyChat
-api-version: 1.17
+api-version: 1.18
 authors: [PainOchoco]
 depend: [Towny]
 softdepend: [PlaceholderAPI]
