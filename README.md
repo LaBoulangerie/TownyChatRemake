@@ -35,6 +35,5 @@ Please contact `PainOchoco#3750` on Discord if you have any issues or requests!
 
 I'm open for suggestions, here is my current to do list:
 
--   Fix reload config command
 -   Moderation commands :
     -   /mute
