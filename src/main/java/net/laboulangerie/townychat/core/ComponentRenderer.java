@@ -10,7 +10,11 @@ import org.bukkit.entity.Player;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.laboulangerie.townychat.TownyChat;
 
 public class ComponentRenderer {
@@ -23,32 +27,55 @@ public class ComponentRenderer {
 
     public Component parse(Player player, String text) {
 
-        String papiParsed = PlaceholderAPI.setPlaceholders(player, text);
-        Component miniMessageParsed = MiniMessage.get().parse(papiParsed, parseTemplates(player));
+        Component miniMessageParsed = getPapiMiniMessage(player).deserialize(text, parseTags(player));
 
         return miniMessageParsed;
     }
 
-    public Component parse(Player player, String text, List<Template> additionnalTemplates) {
-        List<Template> templates = parseTemplates(player);
-        templates.addAll(additionnalTemplates);
+    public Component parse(Player player, String text, TagResolver additionnalResolver) {
+        TagResolver tagResolver = TagResolver.resolver(parseTags(player), additionnalResolver);
 
-        String papiParsed = PlaceholderAPI.setPlaceholders(player, text);
-        Component miniMessageParsed = MiniMessage.get().parse(papiParsed, templates);
+        Component miniMessageParsed = getPapiMiniMessage(player).deserialize(text, tagResolver);
 
         return miniMessageParsed;
     }
 
-    private List<Template> parseTemplates(Player player) {
-        List<Template> templates = new ArrayList<Template>();
-        ConfigurationSection templateSection = config.getConfigurationSection("templates");
+    private TagResolver parseTags(Player player) {
+        List<TagResolver.Single> resolvers = new ArrayList<>();
+        ConfigurationSection tagSection = config.getConfigurationSection("tags");
 
-        for (String key : templateSection.getKeys(false)) {
-            templates.add(Template.of(key,
-                    MiniMessage.get().parse(
-                            PlaceholderAPI.setPlaceholders(player, templateSection.getString(key)))));
+        for (String key : tagSection.getKeys(false)) {
+            String tag = tagSection.getString(key);
+
+            resolvers.add(
+                    Placeholder.component(key,
+                            getPapiMiniMessage(player).deserialize(tag)));
         }
 
-        return templates;
+        return TagResolver.resolver(resolvers);
+    }
+
+    public MiniMessage getPapiMiniMessage(Player player) {
+
+        return MiniMessage.builder().tags(
+                TagResolver.builder()
+                        .resolver(StandardTags.defaults())
+                        .resolver(papiTagResolver(player))
+                        .build())
+                .build();
+    }
+
+    private TagResolver papiTagResolver(Player player) {
+
+        return TagResolver.resolver("papi", (argumentQueue, context) -> {
+            String placeholder = argumentQueue
+                    .popOr("The <papi> tag requires exactly one argument, the PAPI placeholder").value();
+
+            return Tag.selfClosingInserting(
+                    LegacyComponentSerializer.legacySection()
+                            .deserialize(PlaceholderAPI.setPlaceholders(player,
+                                    '%' + placeholder + '%')));
+
+        });
     }
 }

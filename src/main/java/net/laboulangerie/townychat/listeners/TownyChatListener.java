@@ -23,7 +23,7 @@ import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
 import net.laboulangerie.townychat.channels.ChannelTypes;
@@ -55,8 +55,8 @@ public class TownyChatListener implements Listener {
         if (!(chatPlayer.getActiveChannels().contains(currentChannel))) {
             String errMessage = TownyChat.PLUGIN.getConfig().getString("lang.err_channel_disabled");
 
-            TextComponent switchMessageComponent = (TextComponent) MiniMessage.get().parse(errMessage,
-                    Template.of("channel", currentChannel.getType().name().toLowerCase()));
+            TextComponent switchMessageComponent = (TextComponent) MiniMessage.miniMessage().deserialize(errMessage,
+                    Placeholder.unparsed("channel", currentChannel.getType().name().toLowerCase()));
 
             TownyMessaging.sendErrorMsg(player, switchMessageComponent.content());
             event.setCancelled(true);

@@ -23,7 +23,7 @@ public class ShortcutCommand implements CommandExecutor {
             @NotNull String[] args) {
         if (!(sender instanceof Player)) {
             String errorMessage = TownyChat.PLUGIN.getConfig().getString("lang.err_sender_not_player");
-            sender.sendMessage(MiniMessage.get().parse(errorMessage));
+            sender.sendMessage(MiniMessage.miniMessage().deserialize(errorMessage));
             return true;
         }
 
@@ -32,10 +32,12 @@ public class ShortcutCommand implements CommandExecutor {
         Player player = (Player) sender;
         ChatPlayer chatPlayer = TownyChat.PLUGIN.getChatPlayerManager().getChatPlayer(player);
 
-        ChannelTypes previousChannelType = chatPlayer.getCurrentChannel().getType();
-        chatPlayer.setCurrentChannel(channelType);
-        player.chat(message);
-        chatPlayer.setCurrentChannel(previousChannelType);
+        if (chatPlayer.getChannels().keySet().contains(this.channelType)) {
+            ChannelTypes previousChannelType = chatPlayer.getCurrentChannel().getType();
+            chatPlayer.setCurrentChannel(this.channelType);
+            player.chat(message);
+            chatPlayer.setCurrentChannel(previousChannelType);
+        }
 
         return true;
     }

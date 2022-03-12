@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
 import net.laboulangerie.townychat.channels.ChannelTypes;
@@ -33,7 +33,7 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
             @NotNull String[] args) {
         if (!(sender instanceof Player)) {
             String errorMessage = TownyChat.PLUGIN.getConfig().getString("lang.err_sender_not_player");
-            sender.sendMessage(MiniMessage.get().parse(errorMessage));
+            sender.sendMessage(MiniMessage.miniMessage().deserialize(errorMessage));
             return true;
         }
 
@@ -80,8 +80,8 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
             }
 
             String switchMessage = TownyChat.PLUGIN.getConfig().getString("lang.channel_switched");
-            TextComponent switchMessageComponent = (TextComponent) MiniMessage.get().parse(switchMessage,
-                    Template.of("channel", channel.getName()));
+            TextComponent switchMessageComponent = (TextComponent) MiniMessage.miniMessage().deserialize(switchMessage,
+                    Placeholder.unparsed("channel", channel.getName()));
 
             sender.sendMessage("\n");
             TownyMessaging.sendMsg(sender, switchMessageComponent.content());
@@ -91,8 +91,8 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
         }
 
         String errorMessage = TownyChat.PLUGIN.getConfig().getString("lang.err_channel_not_found");
-        TextComponent errorMessageComponent = (TextComponent) MiniMessage.get().parse(errorMessage,
-                Template.of("channel", args[0]));
+        TextComponent errorMessageComponent = (TextComponent) MiniMessage.miniMessage().deserialize(errorMessage,
+                Placeholder.unparsed("channel", args[0]));
 
         TownyMessaging.sendErrorMsg(sender, errorMessageComponent.content());
         return true;

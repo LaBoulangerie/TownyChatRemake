@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.player.ChatPlayer;
 
@@ -28,7 +28,7 @@ public class SpyCommand implements CommandExecutor {
 
         if (!(sender instanceof Player)) {
             String errorMessage = config.getString("lang.err_sender_not_player");
-            sender.sendMessage(MiniMessage.get().parse(errorMessage));
+            sender.sendMessage(MiniMessage.miniMessage().deserialize(errorMessage));
             return true;
         }
 
@@ -45,8 +45,8 @@ public class SpyCommand implements CommandExecutor {
         String disabled = config.getString("lang.disabled");
         String toggledSpyMessage = config.getString("lang.spying_toggled");
 
-        TextComponent messageComponent = (TextComponent) MiniMessage.get().parse(toggledSpyMessage,
-                Template.of("status", chatPlayer.isSpying() ? enabled : disabled));
+        TextComponent messageComponent = (TextComponent) MiniMessage.miniMessage().deserialize(toggledSpyMessage,
+                Placeholder.unparsed("status", chatPlayer.isSpying() ? enabled : disabled));
 
         TownyMessaging.sendMsg(player, messageComponent.content());
 

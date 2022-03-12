@@ -2,14 +2,15 @@
 # MiniMessages Format doc: https://docs.adventure.kyori.net/minimessage#format
 # MiniMessages WebUI: https://webui.adventure.kyori.net/
 # PAPI Placeholders: https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Placeholders
+# Note: PAPI placeholders need to be used like so : <papi:my_placeholder>
 
 # Channel name can be modified
 # Channel format can be modified with PAPI's placeholders and MiniMessage syntax.
 # MiniMessage syntax is powerful, you can format and add hover/click events easily!
 # Channel command can be modified but you'll need to restart your server to get the changes.
 
-# You can define custom templates in the section below
-# and be used them in channel formats like so: <TEMPLATE NAME> !
+# You can define custom tags in the section below
+# and use them in channel formats like so: <TAG_NAME> !
 channels:
     global:
         name: "Global Chat"
@@ -29,18 +30,18 @@ channels:
         command: "nc"
 
 # You can use PAPI's placeholders and MiniMessage syntax here too!
-templates:
+tags:
     town_prefix: "<aqua><bold>TC</bold></aqua>"
     nation_prefix: "<gold><bold>NC</bold></gold>"
     spy_prefix: "<dark_purple><bold>SPY</bold></dark_purple>"
 
-    rank: "%townyadvanced_towny_colour%%townyadvanced_player_status%"
+    rank: "<papi:townyadvanced_towny_colour><papi:townyadvanced_player_status>"
 
-    username: "%townyadvanced_towny_colour%%player_name%"
+    username: "<papi:townyadvanced_towny_colour><papi:player_name>"
 
-    town: "<hover:show_text:'%townyadvanced_town_formatted%\n%townyadvanced_town_residents_amount% resident.s'>%townyadvanced_town_tag%</hover>"
+    town: "<hover:show_text:'<papi:townyadvanced_town_formatted>\n<papi:townyadvanced_town_residents_amount> resident.s'><papi:townyadvanced_town_tag></hover>"
 
-    nation: "<hover:show_text:'%townyadvanced_nation_formatted%\n%townyadvanced_nation_residents_amount% resident.s'>%townyadvanced_nation_tag%</hover>"
+    nation: "<hover:show_text:'<townyadvanced_nation_formatted>\n<townyadvanced_nation_residents_amount> resident.s'><papi:townyadvanced_nation_tag></hover>"
 
 lang:
     channel_switched: "Switched to <channel>"
@@ -58,7 +59,7 @@ blacklist:
     - "fuck"
     - "shit"
 
-# MiniMessage, Placeholders and Templates can be used here
+# MiniMessage, Placeholders and Tags can be used here
 misc:
     join_message: "<green>→</green> <rank> <username>"
     quit_message: "<red>←</red> <rank> <username>"

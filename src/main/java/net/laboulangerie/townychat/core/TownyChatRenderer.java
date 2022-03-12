@@ -1,6 +1,5 @@
 package net.laboulangerie.townychat.core;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -14,7 +13,7 @@ import io.papermc.paper.chat.ChatRenderer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.player.ChatPlayer;
@@ -42,12 +41,11 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
 
         if (source.hasPermission("townychat.format")) {
             TextComponent textMessage = (TextComponent) message;
-            message = MiniMessage.get().parse(textMessage.content());
+            message = MiniMessage.miniMessage().deserialize(textMessage.content());
         }
 
-        return componentRenderer.parse(source, channelFormat, Arrays.asList(
-                Template.of("message",
-                        message)));
+        return componentRenderer.parse(source, channelFormat, Placeholder.component("message",
+                message));
     }
 
     // TODO : Remove redundant method, but how???
@@ -58,11 +56,10 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
 
         if (source.hasPermission("townychat.format")) {
             TextComponent textMessage = (TextComponent) message;
-            message = MiniMessage.get().parse(textMessage.content());
+            message = MiniMessage.miniMessage().deserialize(textMessage.content());
         }
 
-        return componentRenderer.parse(source, channelFormat, Arrays.asList(
-                Template.of("message", message)));
+        return componentRenderer.parse(source, channelFormat, Placeholder.component("message", message));
     }
 
     // TODO: Might replace this with a regex matching every words in the blacklist

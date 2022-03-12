@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
 import net.laboulangerie.townychat.channels.ChannelTypes;
@@ -27,7 +27,7 @@ public class ToggleTownChatCommand implements CommandExecutor {
 
         if (!(sender instanceof Player)) {
             String errorMessage = config.getString("lang.sender_not_player");
-            sender.sendMessage(MiniMessage.get().parse(errorMessage));
+            sender.sendMessage(MiniMessage.miniMessage().deserialize(errorMessage));
             return true;
         }
 
@@ -43,9 +43,9 @@ public class ToggleTownChatCommand implements CommandExecutor {
         String disabled = config.getString("lang.disabled");
         String toggledMessage = config.getString("lang.channel_toggled");
 
-        TextComponent messageComponent = (TextComponent) MiniMessage.get().parse(toggledMessage,
-                Template.of("channel", townChannel.getName()),
-                Template.of("status", isEnabled ? enabled : disabled));
+        TextComponent messageComponent = (TextComponent) MiniMessage.miniMessage().deserialize(toggledMessage,
+                Placeholder.unparsed("channel", townChannel.getName()),
+                Placeholder.unparsed("status", isEnabled ? enabled : disabled));
 
         TownyMessaging.sendMsg(player, messageComponent.content());
         return false;

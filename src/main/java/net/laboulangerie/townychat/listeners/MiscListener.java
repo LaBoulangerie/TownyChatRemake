@@ -1,7 +1,5 @@
 package net.laboulangerie.townychat.listeners;
 
-import java.util.Arrays;
-
 import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
@@ -12,7 +10,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.core.ComponentRenderer;
 
@@ -52,9 +51,9 @@ public class MiscListener implements Listener {
 
         String advancementString = miscSection.getString("advancement." + frame.name().toLowerCase());
         Component advancementComponent = componentRenderer.parse(event.getPlayer(), advancementString,
-                Arrays.asList(
-                        Template.of("advancement_title", advancementDisplay.title()),
-                        Template.of("advancement_description", advancementDisplay.description())));
+                TagResolver.resolver(
+                        Placeholder.component("advancement_title", advancementDisplay.title()),
+                        Placeholder.component("advancement_description", advancementDisplay.description())));
 
         event.getPlayer().sendMessage(advancementDisplay.description());
 
