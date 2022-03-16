@@ -47,4 +47,4 @@ You can add channels using this format: `"government-name"` (e.g. `"town-mytown"
 
 ## 🙏 Support
 
-Please contact `PainOchoco#3750` on Discord if you have any issues or requests!
+Please contact `PainOchoco#3570` on Discord if you have any issues or requests!
