@@ -16,7 +16,6 @@ public class ChannelManager {
 
     public ChannelManager() {
         this.channelsMap = new HashMap<Government, Channel>();
-
         loadChannels();
     }
 
@@ -40,14 +39,14 @@ public class ChannelManager {
         Collection<Town> towns = TownyChat.PLUGIN.getTownyUniverse().getTowns();
 
         for (Town town : towns) {
-            Channel townChannel = new Channel(ChannelTypes.TOWN);
+            Channel townChannel = new Channel(ChannelTypes.TOWN, town);
             this.channelsMap.put(town, townChannel);
         }
 
         Collection<Nation> nations = TownyChat.PLUGIN.getTownyUniverse().getNations();
 
         for (Nation nation : nations) {
-            Channel nationChannel = new Channel(ChannelTypes.NATION);
+            Channel nationChannel = new Channel(ChannelTypes.NATION, nation);
             this.channelsMap.put(nation, nationChannel);
         }
     }

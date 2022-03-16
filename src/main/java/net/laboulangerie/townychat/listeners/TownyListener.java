@@ -110,7 +110,7 @@ public class TownyListener implements Listener {
     public void onNewTown(NewTownEvent event) {
         Town town = event.getTown();
 
-        Channel newTownChannel = new Channel(ChannelTypes.TOWN);
+        Channel newTownChannel = new Channel(ChannelTypes.TOWN, town);
         channelManager.addChannel(town, newTownChannel);
 
         // The mayor is the only player in the town on town creation
@@ -124,7 +124,7 @@ public class TownyListener implements Listener {
     public void onNewNation(NewNationEvent event) {
         Nation nation = event.getNation();
 
-        Channel newNationChannel = new Channel(ChannelTypes.NATION);
+        Channel newNationChannel = new Channel(ChannelTypes.NATION, nation);
         channelManager.addChannel(nation, newNationChannel);
 
         for (Resident resident : nation.getResidents()) {
