@@ -3,9 +3,9 @@ package net.laboulangerie.townychat.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
@@ -25,14 +25,14 @@ public class ComponentRenderer {
         this.config = TownyChat.PLUGIN.getConfig();
     }
 
-    public Component parse(Player player, String text) {
+    public Component parse(OfflinePlayer player, String text) {
 
         Component miniMessageParsed = getPapiMiniMessage(player).deserialize(text, parseTags(player));
 
         return miniMessageParsed;
     }
 
-    public Component parse(Player player, String text, TagResolver additionnalResolver) {
+    public Component parse(OfflinePlayer player, String text, TagResolver additionnalResolver) {
         TagResolver tagResolver = TagResolver.resolver(parseTags(player), additionnalResolver);
 
         Component miniMessageParsed = getPapiMiniMessage(player).deserialize(text, tagResolver);
@@ -40,7 +40,7 @@ public class ComponentRenderer {
         return miniMessageParsed;
     }
 
-    private TagResolver parseTags(Player player) {
+    private TagResolver parseTags(OfflinePlayer player) {
         List<TagResolver.Single> resolvers = new ArrayList<>();
         ConfigurationSection tagSection = config.getConfigurationSection("tags");
 
@@ -55,7 +55,7 @@ public class ComponentRenderer {
         return TagResolver.resolver(resolvers);
     }
 
-    public MiniMessage getPapiMiniMessage(Player player) {
+    public MiniMessage getPapiMiniMessage(OfflinePlayer player) {
 
         return MiniMessage.builder().tags(
                 TagResolver.builder()
@@ -65,7 +65,7 @@ public class ComponentRenderer {
                 .build();
     }
 
-    private TagResolver papiTagResolver(Player player) {
+    private TagResolver papiTagResolver(OfflinePlayer player) {
 
         return TagResolver.resolver("papi", (argumentQueue, context) -> {
             String placeholder = argumentQueue
