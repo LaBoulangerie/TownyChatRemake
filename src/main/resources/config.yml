@@ -67,4 +67,4 @@ misc:
         # <advancement_title> and <advancement_description> can be used.
         challenge: "<dark_purple>✽ <username> has made the advancement <bold><hover:show_text:'<dark_purple>a<advancement_description>'><advancement_title>"
         goal: "<gold>✸ <username> has made the advancement <bold><hover:show_text:'<gold>a<advancement_description>'><advancement_title>"
-        task: "<yellow>✦ <username> has made the advancement <bold><hover:show_text:'<yellow>a<advancement_description>'><advancement_title>"
+        task: "<yellow>✦ <username> has made the advancement <bold><hover:show_text:'<yellow><advancement_description>'><advancement_title>"

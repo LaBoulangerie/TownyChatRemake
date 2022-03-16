@@ -28,6 +28,7 @@ import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
 import net.laboulangerie.townychat.channels.ChannelTypes;
 import net.laboulangerie.townychat.core.TownyChatRenderer;
+import net.laboulangerie.townychat.events.AsyncChatHookEvent;
 import net.laboulangerie.townychat.player.ChatPlayer;
 import net.laboulangerie.townychat.player.ChatPlayerManager;
 
@@ -112,6 +113,9 @@ public class TownyChatListener implements Listener {
 
         event.viewers().addAll(recipients);
         event.viewers().add(Bukkit.getConsoleSender());
+
+        AsyncChatHookEvent hookEvent = new AsyncChatHookEvent(event, currentChannel, !Bukkit.isPrimaryThread());
+        Bukkit.getPluginManager().callEvent(hookEvent);
     }
 
     private Boolean shouldSpy(Player spy, Player spied) {

@@ -31,6 +31,10 @@ public class ChatPlayerManager {
         return this.playersMap.get(player.getUniqueId());
     }
 
+    public Map<UUID, ChatPlayer> getChatPlayers() {
+        return this.playersMap;
+    }
+
     public Set<ChatPlayer> getSpies() {
         return playersMap.values().stream().filter(ChatPlayer::isSpying).collect(Collectors.toSet());
     }

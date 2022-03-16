@@ -1,6 +1,7 @@
 package net.laboulangerie.townychat;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.palmergames.bukkit.towny.TownyAPI;
@@ -12,9 +13,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import github.scarsz.discordsrv.DiscordSRV;
 import net.laboulangerie.townychat.channels.Channel;
 import net.laboulangerie.townychat.channels.ChannelManager;
 import net.laboulangerie.townychat.channels.ChannelTypes;
@@ -26,6 +29,7 @@ import net.laboulangerie.townychat.commands.towny.ToggleNationChatCommand;
 import net.laboulangerie.townychat.commands.towny.ToggleTownChatCommand;
 import net.laboulangerie.townychat.core.ComponentRenderer;
 import net.laboulangerie.townychat.core.TownyChatRenderer;
+import net.laboulangerie.townychat.listeners.DiscordHook;
 import net.laboulangerie.townychat.listeners.MiscListener;
 import net.laboulangerie.townychat.listeners.TownyChatListener;
 import net.laboulangerie.townychat.listeners.TownyListener;
@@ -34,20 +38,23 @@ import net.laboulangerie.townychat.player.ChatPlayerManager;
 public class TownyChat extends JavaPlugin {
     public static TownyChat PLUGIN;
 
+    private TownyAPI townyAPI;
+    private TownyUniverse townyUniverse;
+
     private ChatPlayerManager chatPlayerManager;
     private ChannelManager channelManager;
     private ComponentRenderer componentRenderer;
     private TownyChatRenderer townyChatRenderer;
-    private TownyAPI townyAPI;
-    private TownyUniverse townyUniverse;
     private Channel globalChannel;
+
+    private ArrayList<Listener> listeners;
 
     @Override
     public void onEnable() {
         TownyChat.PLUGIN = this;
         this.saveDefaultConfig();
 
-        this.globalChannel = new Channel(ChannelTypes.GLOBAL);
+        this.globalChannel = new Channel(ChannelTypes.GLOBAL, null);
 
         this.townyAPI = TownyAPI.getInstance();
         this.townyUniverse = TownyUniverse.getInstance();
@@ -57,16 +64,34 @@ public class TownyChat extends JavaPlugin {
         this.chatPlayerManager = new ChatPlayerManager();
         this.townyChatRenderer = new TownyChatRenderer();
 
-        this.registerListeners();
+        this.channelManager.addChannel(null, this.globalChannel);
 
         this.getCommand("chat").setExecutor(new ChatCommands());
         this.getCommand("spy").setExecutor(new SpyCommand());
 
+        // /town toggle chat
         TownyCommandAddonAPI.addSubCommand(CommandType.TOWN_TOGGLE, "chat", new ToggleTownChatCommand());
+        // /nation toggle chat
         TownyCommandAddonAPI.addSubCommand(CommandType.NATION_TOGGLE, "chat", new ToggleNationChatCommand());
+        // /townyadmin reload chat
         TownyCommandAddonAPI.addSubCommand(CommandType.TOWNYADMIN_RELOAD, "chat", new ReloadTownyChatCommand());
 
         this.registerShortcutCommands();
+
+        DiscordHook discordHook = new DiscordHook();
+
+        this.listeners = new ArrayList<>(Arrays.asList(
+                new TownyChatListener(),
+                new MiscListener(),
+                new TownyListener(),
+                discordHook));
+
+        this.registerListeners();
+
+        // Is DiscordSRV enabled? It's a softdepend
+        if (getServer().getPluginManager().getPlugin("DiscordSRV") != null) {
+            DiscordSRV.getPlugin().getPluginHooks().add(discordHook);
+        }
 
         getLogger().info("Plugin started");
     }
@@ -105,10 +130,7 @@ public class TownyChat extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Arrays.asList(
-                new TownyChatListener(),
-                new MiscListener(),
-                new TownyListener()).forEach(l -> this.getServer().getPluginManager().registerEvents(l, this));
+        listeners.forEach(l -> this.getServer().getPluginManager().registerEvents(l, this));
     }
 
     private void registerShortcutCommands() {
