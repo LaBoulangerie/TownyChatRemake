@@ -3,7 +3,7 @@ name: TownyChatRemake continuous delivery
 on:
     push:
         branches:
-            - master
+            - main
 jobs:
     build:
         runs-on: ubuntu-latest
