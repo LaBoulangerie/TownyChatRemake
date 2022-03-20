@@ -71,11 +71,14 @@ public class ComponentRenderer {
             String placeholder = argumentQueue
                     .popOr("The <papi> tag requires exactly one argument, the PAPI placeholder").value();
 
-            return Tag.selfClosingInserting(
-                    LegacyComponentSerializer.legacySection()
-                            .deserialize(PlaceholderAPI.setPlaceholders(player,
-                                    '%' + placeholder + '%')));
+            String parsedPlaceholder = PlaceholderAPI.setPlaceholders(player, '%' + placeholder + '%');
 
+            if (parsedPlaceholder.contains("§")) {
+                return Tag
+                        .selfClosingInserting(LegacyComponentSerializer.legacySection().deserialize(parsedPlaceholder));
+            }
+
+            return Tag.selfClosingInserting(MiniMessage.miniMessage().deserialize(parsedPlaceholder));
         });
     }
 }
