@@ -44,7 +44,7 @@ public class MiscListener implements Listener {
         Advancement advancement = event.getAdvancement();
         AdvancementDisplay advancementDisplay = advancement.getDisplay();
 
-        if (!advancementDisplay.doesAnnounceToChat() || advancementDisplay == null)
+        if (advancementDisplay == null || !advancementDisplay.doesAnnounceToChat())
             return;
 
         AdvancementDisplay.Frame frame = advancementDisplay.frame();
