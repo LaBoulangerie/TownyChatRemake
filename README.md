@@ -16,6 +16,10 @@
 
 ## 🛠 Usage
 
+⚠️ You must use [Paper 1.18.2](https://papermc.io/downloads) to run this plugin.
+
+This is because it uses the [Adventure library](https://github.com/KyoriPowered/adventure) to handle chat formatting.
+
 ### Commands
 
 -   `/chat <channel>` - Switch between channels, e.g. `/chat town`
@@ -29,6 +33,18 @@
 -   `townychat.chat` - Default permission to switch channels
 -   `townychat.spy` - Toggle spy mode, it allows you to receive messages from all the channels
 -   `townychat.format` - Chat formatting with the [MiniMessage Format](https://docs.adventure.kyori.net/minimessage/format.html)
+
+### Config
+
+Everything should be explained in the config.yml file, but here are some reminders:
+
+-   The `tags`' config section is made so that you can add components easily in other config strings.
+-   You can use PAPI placeholders in every config strings except in the `lang` section like so: `<papi:YOUR_PLACEHOLDER_NAME>` (e.g `<papi:townyadvanced_town_tag>`)
+-   Useful links:
+    -   [MiniMessages format](https://docs.adventure.kyori.net/minimessage#format)
+    -   [MiniMessages viewer](https://webui.adventure.kyori.net/)
+    -   [Every PAPI placeholders](https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Placeholders)
+    -   [Towny placeholders](https://github.com/TownyAdvanced/Towny/wiki/Placeholders)
 
 ### ⚙️ Recommended Towny Settings
 

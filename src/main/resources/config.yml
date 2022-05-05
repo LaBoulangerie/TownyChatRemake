@@ -1,7 +1,8 @@
 # Useful links to make your chat even more beautiful:
-# MiniMessages Format doc: https://docs.adventure.kyori.net/minimessage#format
-# MiniMessages WebUI: https://webui.adventure.kyori.net/
-# PAPI Placeholders: https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Placeholders
+# MiniMessages format: https://docs.adventure.kyori.net/minimessage#format
+# MiniMessages viewer: https://webui.adventure.kyori.net/
+# PAPI placeholders: https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Placeholders
+# Towny placeholders: https://github.com/TownyAdvanced/Towny/wiki/Placeholders
 # Note: PAPI placeholders need to be used like so : <papi:my_placeholder>
 
 # Channel name can be modified
@@ -65,6 +66,6 @@ misc:
     quit_message: "<red>←</red> <rank> <username>"
     advancement:
         # <advancement_title> and <advancement_description> can be used.
-        challenge: "<dark_purple>✽ <username> has made the advancement <bold><hover:show_text:'<dark_purple>a<advancement_description>'><advancement_title>"
-        goal: "<gold>✸ <username> has made the advancement <bold><hover:show_text:'<gold>a<advancement_description>'><advancement_title>"
+        challenge: "<dark_purple>✽ <username> has made the advancement <bold><hover:show_text:'<dark_purple><advancement_description>'><advancement_title>"
+        goal: "<gold>✸ <username> has made the advancement <bold><hover:show_text:'<gold><advancement_description>'><advancement_title>"
         task: "<yellow>✦ <username> has made the advancement <bold><hover:show_text:'<yellow><advancement_description>'><advancement_title>"
