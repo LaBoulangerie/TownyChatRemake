@@ -78,19 +78,21 @@ public class TownyChat extends JavaPlugin {
 
         this.registerShortcutCommands();
 
-        DiscordHook discordHook = new DiscordHook();
-
         this.listeners = new ArrayList<>(Arrays.asList(
                 new TownyChatListener(),
                 new MiscListener(),
-                new TownyListener(),
-                discordHook));
-
-        this.registerListeners();
+                new TownyListener()));
 
         // Is DiscordSRV enabled? It's a softdepend
         if (getServer().getPluginManager().getPlugin("DiscordSRV") != null) {
+            DiscordHook discordHook = new DiscordHook();
+
+            this.listeners.add(discordHook);
+            this.registerListeners();
             DiscordSRV.getPlugin().getPluginHooks().add(discordHook);
+            getLogger().info("Hooked to DiscordSRV!");
+        } else {
+            this.registerListeners();
         }
 
         getLogger().info("Plugin started");
