@@ -61,6 +61,25 @@ You can also link Discord channels to towns and nations specific in-game channel
 Go to DiscordSRV's `config.yml` and to the `Channels` setting.
 You can add channels using this format: `"government-name"` (e.g. `"town-mytown"`), all lowercase.
 
+## 📋 To do list
+
+By priority:
+
+-   [ ] Better permissions
+
+    -   [ ] `townychat.hear.<channel>` - Recieve message from that channel
+    -   [ ] `townychat.write.<channel>` - Write in that channel
+    -   [ ] `townychat.format.`
+        -   [ ] `colors` - Use the colors in message (e.g aqua or #00FF00)
+        -   [ ] `decorations` - Use decoration in message (italic, bold, underline, strikethrough, obfuscated)
+        -   [ ] `misc` - Use every other MiniMessage features in message (click, hover, keybind, translatable, insertion, rainbow, gradient, transition, font, newline)
+
+-   [ ] Switch channels quickly with /tc /nc /gc...
+-   [ ] Cooldown
+-   [ ] Support for legacy colors formatting (e.g. &e for yellow text)
+-   [ ] (?) Custom channels
+-   [ ] (?) Muteable parameter for channels
+
 ## 🙏 Support
 
 Please contact `PainOchoco#3570` on Discord if you have any issues or requests!
