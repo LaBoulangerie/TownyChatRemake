@@ -98,22 +98,23 @@ public class ChatPlayer {
 
     private void loadPlayerChannels() {
         Resident resident = TownyUniverse.getInstance().getResident(this.getUniqueId());
+        if (resident != null) {
+            Town town = resident.getTownOrNull();
+            Nation nation = resident.getNationOrNull();
 
-        Town town = resident.getTownOrNull();
-        Nation nation = resident.getNationOrNull();
+            if (town != null && this.channelManager.getChannels().containsKey(town)) {
+                Channel townChannel = this.channelManager.getChannel(town);
 
-        if (town != null && this.channelManager.getChannels().containsKey(town)) {
-            Channel townChannel = this.channelManager.getChannel(town);
+                this.activeChannels.add(townChannel);
+                this.channels.put(ChannelTypes.TOWN, townChannel);
+            }
 
-            this.activeChannels.add(townChannel);
-            this.channels.put(ChannelTypes.TOWN, townChannel);
-        }
+            if (nation != null && this.channelManager.getChannels().containsKey(nation)) {
+                Channel nationChannel = this.channelManager.getChannel(nation);
 
-        if (nation != null && this.channelManager.getChannels().containsKey(nation)) {
-            Channel nationChannel = this.channelManager.getChannel(nation);
-
-            this.activeChannels.add(nationChannel);
-            this.channels.put(ChannelTypes.NATION, nationChannel);
+                this.activeChannels.add(nationChannel);
+                this.channels.put(ChannelTypes.NATION, nationChannel);
+            }
         }
 
         Channel globalChannel = TownyChat.PLUGIN.getGlobalChannel();
