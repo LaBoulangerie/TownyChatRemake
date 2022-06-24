@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
@@ -29,7 +30,17 @@ public class MiscListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         String joinString = miscSection.getString("join_message");
         Component joinComponent = componentRenderer.parse(event.getPlayer(), joinString);
-        event.joinMessage(joinComponent);
+
+        event.joinMessage(null);
+
+        // Wait for Towny to create new resident
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                TownyChat.PLUGIN.getServer().broadcast(joinComponent);
+            }
+        }.runTaskLater(TownyChat.PLUGIN, 5);
     }
 
     @EventHandler
