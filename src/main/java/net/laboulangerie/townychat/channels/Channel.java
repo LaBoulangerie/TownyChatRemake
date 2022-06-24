@@ -2,8 +2,6 @@ package net.laboulangerie.townychat.channels;
 
 import com.palmergames.bukkit.towny.object.Government;
 
-import org.bukkit.configuration.ConfigurationSection;
-
 import net.laboulangerie.townychat.TownyChat;
 
 public class Channel {
@@ -11,17 +9,10 @@ public class Channel {
     private String id;
     private ChannelTypes type;
     private Government government;
-    private ConfigurationSection channelSection;
 
     public Channel(ChannelTypes type, Government government) {
         this.type = type;
         this.government = government;
-
-        String typeString = type.name().toLowerCase();
-
-        this.channelSection = TownyChat.PLUGIN.getConfig()
-                .getConfigurationSection("channels." + typeString);
-
         this.id = government == null
                 ? type.name().toLowerCase()
                 : type.name().toLowerCase() + "-" + government.getName().toLowerCase();
@@ -40,14 +31,19 @@ public class Channel {
     }
 
     public String getName() {
-        return channelSection.getString("name");
+        return getParameter("name");
     }
 
     public String getFormat() {
-        return channelSection.getString("format");
+        return getParameter("format");
     }
 
     public String getSpyFormat() {
-        return channelSection.getString("spy_format");
+        return getParameter("spy_format");
+    }
+
+    private String getParameter(String parameter) {
+        return TownyChat.PLUGIN.getConfig().getConfigurationSection("channels." + this.type.name().toLowerCase())
+                .getString(parameter);
     }
 }

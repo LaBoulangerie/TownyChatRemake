@@ -35,7 +35,7 @@ public class ChannelManager {
         this.channelsMap.remove(government);
     }
 
-    private void loadChannels() {
+    public void loadChannels() {
         Collection<Town> towns = TownyChat.PLUGIN.getTownyUniverse().getTowns();
 
         for (Town town : towns) {
@@ -49,5 +49,9 @@ public class ChannelManager {
             Channel nationChannel = new Channel(ChannelTypes.NATION, nation);
             this.channelsMap.put(nation, nationChannel);
         }
+    }
+
+    public void unloadChannels() {
+        this.channelsMap.clear();
     }
 }
