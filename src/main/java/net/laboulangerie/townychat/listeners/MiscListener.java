@@ -29,7 +29,6 @@ public class MiscListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         String joinString = miscSection.getString("join_message");
-        Component joinComponent = componentRenderer.parse(event.getPlayer(), joinString);
 
         event.joinMessage(null);
 
@@ -38,6 +37,7 @@ public class MiscListener implements Listener {
 
             @Override
             public void run() {
+                Component joinComponent = componentRenderer.parse(event.getPlayer(), joinString);
                 TownyChat.PLUGIN.getServer().broadcast(joinComponent);
             }
         }.runTaskLater(TownyChat.PLUGIN, 5);
