@@ -37,15 +37,16 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
         String channelFormat = chatPlayer.getCurrentChannel().getFormat();
 
+        // Censor the message with the word blacklist
         message = Component.text(censorString(PlainTextComponentSerializer.plainText().serialize(message)));
 
         if (source.hasPermission("townychat.format")) {
+            // Format the message using MiniMessage
             TextComponent textMessage = (TextComponent) message;
             message = MiniMessage.miniMessage().deserialize(textMessage.content());
         }
 
-        return componentRenderer.parse(source, channelFormat, Placeholder.component("message",
-                message));
+        return componentRenderer.parse(source, channelFormat, Placeholder.component("message", message));
     }
 
     // TODO : Remove redundant method, but how???
@@ -62,7 +63,6 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
         return componentRenderer.parse(source, channelFormat, Placeholder.component("message", message));
     }
 
-    // TODO: Might replace this with a regex matching every words in the blacklist
     private String censorString(String string) {
         List<String> words = config.getStringList("blacklist");
         String[] censorChars = { "#", "@", "!", "*" };

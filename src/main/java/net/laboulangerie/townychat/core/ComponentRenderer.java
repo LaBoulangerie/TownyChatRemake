@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
@@ -18,12 +17,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.laboulangerie.townychat.TownyChat;
 
 public class ComponentRenderer {
-
-    private FileConfiguration config;
-
-    public ComponentRenderer() {
-        this.config = TownyChat.PLUGIN.getConfig();
-    }
 
     public Component parse(OfflinePlayer player, String text) {
 
@@ -42,7 +35,7 @@ public class ComponentRenderer {
 
     private TagResolver parseTags(OfflinePlayer player) {
         List<TagResolver.Single> resolvers = new ArrayList<>();
-        ConfigurationSection tagSection = config.getConfigurationSection("tags");
+        ConfigurationSection tagSection = TownyChat.PLUGIN.getConfig().getConfigurationSection("tags");
 
         for (String key : tagSection.getKeys(false)) {
             String tag = tagSection.getString(key);
