@@ -35,6 +35,10 @@ public class TownyListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTownRemoveResident(TownRemoveResidentEvent event) {
         Player player = event.getResident().getPlayer();
+
+        if (!player.isOnline())
+            return;
+
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
         Channel currentChannel = chatPlayer.getCurrentChannel();
@@ -53,6 +57,10 @@ public class TownyListener implements Listener {
         for (Resident resident : town.getResidents()) {
 
             Player player = resident.getPlayer();
+
+            if (!player.isOnline())
+                return;
+
             ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             Channel currentChannel = chatPlayer.getCurrentChannel();
@@ -72,6 +80,10 @@ public class TownyListener implements Listener {
         for (Resident resident : town.getResidents()) {
 
             Player player = resident.getPlayer();
+
+            if (!player.isOnline())
+                return;
+
             ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             Channel currentChannel = chatPlayer.getCurrentChannel();
@@ -93,6 +105,10 @@ public class TownyListener implements Listener {
         for (Resident resident : nation.getResidents()) {
 
             Player player = resident.getPlayer();
+
+            if (!player.isOnline())
+                return;
+
             ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             Channel currentChannel = chatPlayer.getCurrentChannel();
@@ -115,6 +131,11 @@ public class TownyListener implements Listener {
 
         // The mayor is the only player in the town on town creation
         Player player = town.getMayor().getPlayer();
+
+        // Should be online but just in case (admin commands)
+        if (!player.isOnline())
+            return;
+
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
         chatPlayer.addChannel(ChannelTypes.TOWN, newTownChannel);
@@ -129,6 +150,10 @@ public class TownyListener implements Listener {
 
         for (Resident resident : nation.getResidents()) {
             Player player = resident.getPlayer();
+
+            if (!player.isOnline())
+                return;
+
             ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             chatPlayer.addChannel(ChannelTypes.NATION, newNationChannel);
@@ -138,6 +163,10 @@ public class TownyListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTownAddResident(TownAddResidentEvent event) {
         Player player = event.getResident().getPlayer();
+
+        if (!player.isOnline())
+            return;
+
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
         Town town = event.getTown();
