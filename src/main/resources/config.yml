@@ -10,30 +10,41 @@
 # MiniMessage syntax is powerful, you can format and add hover/click events easily!
 # Channel command can be modified but you'll need to restart your server to get the changes.
 
-# You can define custom tags in the section below
-# and use them in channel formats like so: <TAG_NAME> !
 channels:
     global:
         name: "Global Chat"
+        aliases: ["g", "general"]
         format: "<town><nation><rank> <username> > <message>"
         command: "gc"
 
     town:
         name: "Town Chat"
-        format: "<town_prefix> <rank> <username> <aqua>> <message>"
-        spy_format: "<spy_prefix> <town_prefix> <town> <username> <dark_purple>> <message>"
+        aliases: ["t"]
+        format: "<town_prefix> <rank> <username> > <aqua><message>"
+        spy_format: "<spy_prefix> <town_prefix> <town> <username> > <dark_purple><message>"
         command: "tc"
 
     nation:
         name: "Nation Chat"
-        format: "<nation_prefix> <town><rank> <username> <gold>> <message>"
-        spy_format: "<spy_prefix> <nation_prefix> <nation> <username> <purple>> <message>"
+        aliases: ["n"]
+        format: "<nation_prefix> <town><rank> <username> > <gold><message>"
+        spy_format: "<spy_prefix> <nation_prefix> <nation> <username> > <dark_purple><message>"
         command: "nc"
 
+    local:
+        name: "Local Chat"
+        aliases: ["l"]
+        format: "<local_prefix> <town><nation><rank> <username> > <orange><message>"
+        spy_format: "<spy_prefix> <local_prefix> <town><nation> <username> > <dark_purple><message>"
+        radius: 20
+
+# You can define custom tags in the section below
+# and use them in channel formats like so: <tag_name>
 # You can use PAPI's placeholders and MiniMessage syntax here too!
 tags:
     town_prefix: "<aqua><bold>TC</bold></aqua>"
     nation_prefix: "<gold><bold>NC</bold></gold>"
+    local_prefix: "<orange><bold>LC</bold></gold>"
     spy_prefix: "<dark_purple><bold>SPY</bold></dark_purple>"
 
     rank: "<papi:townyadvanced_towny_colour><papi:townyadvanced_player_status>"
@@ -54,6 +65,7 @@ lang:
     err_channel_not_found: "Channel <channel> not found"
     err_sender_not_player: "<red>You need to be in-game in order to do this!"
     err_channel_disabled: "You disabled this channel! Use /<channel> toggle chat to enable it"
+    err_no_message: "You didn't sent a message. Usage: /<channel> your message"
 
 blacklist:
     - "chocolatine"

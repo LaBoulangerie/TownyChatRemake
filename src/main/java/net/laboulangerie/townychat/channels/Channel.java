@@ -1,5 +1,7 @@
 package net.laboulangerie.townychat.channels;
 
+import java.util.List;
+
 import com.palmergames.bukkit.towny.object.Government;
 
 import net.laboulangerie.townychat.TownyChat;
@@ -40,6 +42,10 @@ public class Channel {
 
     public String getSpyFormat() {
         return getParameter("spy_format");
+    }
+
+    public List<String> getAliases() {
+        return TownyChat.PLUGIN.getConfig().getStringList("channels." + this.type.name().toLowerCase() + ".aliases");
     }
 
     private String getParameter(String parameter) {

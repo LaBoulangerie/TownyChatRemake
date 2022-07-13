@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Translatable;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -42,35 +39,25 @@ public class ChatCommands implements CommandExecutor, TabCompleter {
 
         Player player = (Player) sender;
         ChatPlayer chatPlayer = TownyChat.PLUGIN.getChatPlayerManager().getChatPlayer(player);
+        Set<String> channels = chatPlayer.getChannels().values().stream()
+                .map(c -> c.getType().name().toLowerCase())
+                .collect(Collectors.toSet());
 
-        Set<String> availableChannelsStrings = chatPlayer.getChannels().keySet().stream()
-                .map(c -> c.name().toLowerCase()).collect(Collectors.toSet());
+        ChannelTypes channelType = null;
 
-        if (availableChannelsStrings.contains(args[0])) {
-
-            TownyAPI townyAPI = TownyChat.PLUGIN.getTownyAPI();
-            Resident resident = townyAPI.getResident(player);
-
-            switch (args[0].toLowerCase()) {
-                case "town":
-                    if (!resident.hasTown()) {
-                        TownyMessaging.sendErrorMsg(sender, Translatable.of("msg_err_dont_belong_town"));
-                        return true;
-                    }
+        if (channels.contains(args[0])) {
+            channelType = ChannelTypes.valueOf(args[0].toUpperCase());
+        } else {
+            for (Channel channel : chatPlayer.getChannels().values()) {
+                if (channel.getAliases().contains(args[0])) {
+                    channelType = channel.getType();
                     break;
-
-                case "nation":
-                    if (!resident.hasNation()) {
-                        TownyMessaging.sendErrorMsg(sender, Translatable.of("msg_err_dont_belong_nation"));
-                        return true;
-                    }
-                    break;
-
-                default:
-                    break;
+                }
             }
+        }
 
-            ChannelTypes channelType = ChannelTypes.valueOf(args[0].toUpperCase());
+        if (channelType != null) {
+
             chatPlayer.setCurrentChannel(channelType);
 
             Channel channel = chatPlayer.getChannel(channelType);
