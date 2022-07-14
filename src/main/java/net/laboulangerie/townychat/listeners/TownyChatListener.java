@@ -108,9 +108,7 @@ public class TownyChatListener implements Listener {
                 int radius = TownyChat.PLUGIN.getConfig().getInt("channels.local.radius");
                 try {
                     residents.addAll(getNearbyResidents(player, radius).get());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -130,7 +128,6 @@ public class TownyChatListener implements Listener {
                 p -> !(chatPlayerManager.getChatPlayer(p).getActiveChannels()
                         .contains(currentChannel)));
 
-        System.out.println(currentChannel.getType().name());
         if (currentChannel.getType() != ChannelTypes.LOCAL) {
             recipients.removeIf(
                     p -> chatPlayerManager.getChatPlayer(p).getCurrentChannel().getType() == ChannelTypes.LOCAL);
@@ -161,7 +158,6 @@ public class TownyChatListener implements Listener {
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         chatPlayerManager.unloadChatPlayer(player);
-
     }
 
     private CompletableFuture<List<Resident>> getNearbyResidents(Player player, int radius) {
