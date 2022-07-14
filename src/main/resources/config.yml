@@ -34,7 +34,7 @@ channels:
     local:
         name: "Local Chat"
         aliases: ["l"]
-        format: "<local_prefix> <town><nation><rank> <username> > <orange><message>"
+        format: "<local_prefix> <town><nation><rank> <username> > <green><message>"
         spy_format: "<spy_prefix> <local_prefix> <town><nation> <username> > <dark_purple><message>"
         radius: 20
 
@@ -44,7 +44,7 @@ channels:
 tags:
     town_prefix: "<aqua><bold>TC</bold></aqua>"
     nation_prefix: "<gold><bold>NC</bold></gold>"
-    local_prefix: "<orange><bold>LC</bold></gold>"
+    local_prefix: "<green><bold>LC</bold></green>"
     spy_prefix: "<dark_purple><bold>SPY</bold></dark_purple>"
 
     rank: "<papi:townyadvanced_towny_colour><papi:townyadvanced_player_status>"

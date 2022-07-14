@@ -46,6 +46,7 @@ public class TownyChat extends JavaPlugin {
     private ComponentRenderer componentRenderer;
     private TownyChatRenderer townyChatRenderer;
     private Channel globalChannel;
+    private Channel localChannel;
 
     private ArrayList<Listener> listeners;
 
@@ -55,6 +56,7 @@ public class TownyChat extends JavaPlugin {
         this.saveDefaultConfig();
 
         this.globalChannel = new Channel(ChannelTypes.GLOBAL, null);
+        this.localChannel = new Channel(ChannelTypes.LOCAL, null);
 
         this.townyAPI = TownyAPI.getInstance();
         this.townyUniverse = TownyUniverse.getInstance();
@@ -65,6 +67,7 @@ public class TownyChat extends JavaPlugin {
         this.townyChatRenderer = new TownyChatRenderer();
 
         this.channelManager.addChannel(null, this.globalChannel);
+        this.channelManager.addChannel(null, this.localChannel);
 
         this.getCommand("chat").setExecutor(new ChatCommands());
         this.getCommand("spy").setExecutor(new SpyCommand());
@@ -129,6 +132,10 @@ public class TownyChat extends JavaPlugin {
 
     public Channel getGlobalChannel() {
         return this.globalChannel;
+    }
+
+    public Channel getLocalChannel() {
+        return this.localChannel;
     }
 
     private void registerListeners() {

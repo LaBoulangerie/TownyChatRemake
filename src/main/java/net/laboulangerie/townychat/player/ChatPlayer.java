@@ -27,7 +27,7 @@ public class ChatPlayer {
     private Map<ChannelTypes, Channel> channels;
     private Set<Channel> activeChannels;
 
-    private Boolean isSpying;
+    private boolean isSpying;
 
     public ChatPlayer(OfflinePlayer player) {
         this.uniqueId = player.getUniqueId();
@@ -67,11 +67,11 @@ public class ChatPlayer {
         this.channels.put(channelType, channel);
     }
 
-    public Boolean isSpying() {
+    public boolean isSpying() {
         return this.isSpying;
     }
 
-    public void setSpying(Boolean isSpying) {
+    public void setSpying(boolean isSpying) {
         this.isSpying = isSpying;
     }
 
@@ -121,5 +121,9 @@ public class ChatPlayer {
         this.activeChannels.add(globalChannel);
         this.channels.put(ChannelTypes.GLOBAL, globalChannel);
         this.currentChannel = globalChannel;
+
+        Channel localChannel = TownyChat.PLUGIN.getLocalChannel();
+        this.activeChannels.add(localChannel);
+        this.channels.put(ChannelTypes.LOCAL, localChannel);
     }
 }
