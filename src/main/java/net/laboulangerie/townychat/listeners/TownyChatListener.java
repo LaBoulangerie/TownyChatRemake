@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import com.palmergames.bukkit.towny.TownyAPI;
@@ -18,13 +16,11 @@ import com.palmergames.bukkit.towny.object.Town;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -106,11 +102,7 @@ public class TownyChatListener implements Listener {
 
             case LOCAL:
                 int radius = TownyChat.PLUGIN.getConfig().getInt("channels.local.radius");
-                try {
-                    residents.addAll(getNearbyResidents(player, radius).get());
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+                residents.addAll(getNearbyResidents(player, radius));
                 break;
 
             case GLOBAL:
@@ -160,32 +152,20 @@ public class TownyChatListener implements Listener {
         chatPlayerManager.unloadChatPlayer(player);
     }
 
-    private CompletableFuture<List<Resident>> getNearbyResidents(Player player, int radius) {
+    private List<Resident> getNearbyResidents(Player player, int radius) {
         List<Resident> nearbyResidents = new ArrayList<Resident>();
         Location playerLocation = player.getLocation();
 
-        CompletableFuture<List<Resident>> completableFuture = new CompletableFuture<List<Resident>>();
+        for (Player nearbyPlayer : player.getWorld().getPlayers()) {
+            if (nearbyPlayer.getLocation().distance(playerLocation) <= radius) {
+                ChatPlayer nearbyChatPlayer = chatPlayerManager.getChatPlayer(nearbyPlayer);
 
-        // Bukkit API can't be accessed asynchronously
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Entity entity : player.getWorld().getEntities()) {
-                    if (entity instanceof Player && entity.getLocation().distance(playerLocation) <= radius) {
-
-                        Player nearbyPlayer = (Player) entity;
-                        ChatPlayer nearbyChatPlayer = chatPlayerManager.getChatPlayer(nearbyPlayer);
-
-                        if (nearbyChatPlayer.getCurrentChannel().getType() == ChannelTypes.LOCAL) {
-                            nearbyResidents.add(townyAPI.getResident(nearbyPlayer));
-                        }
-                    }
+                if (nearbyChatPlayer.getCurrentChannel().getType() == ChannelTypes.LOCAL) {
+                    nearbyResidents.add(townyAPI.getResident(nearbyPlayer));
                 }
-
-                completableFuture.complete(nearbyResidents);
             }
-        }.runTaskLater(TownyChat.PLUGIN, 0);
+        }
 
-        return completableFuture;
+        return nearbyResidents;
     }
 }
