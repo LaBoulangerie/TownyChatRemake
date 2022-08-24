@@ -66,8 +66,6 @@ public class MiscListener implements Listener {
                         Placeholder.component("advancement_title", advancementDisplay.title()),
                         Placeholder.component("advancement_description", advancementDisplay.description())));
 
-        event.getPlayer().sendMessage(advancementDisplay.description());
-
         event.message(advancementComponent);
     }
 
