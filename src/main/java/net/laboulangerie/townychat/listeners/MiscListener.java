@@ -37,7 +37,8 @@ public class MiscListener implements Listener {
 
             @Override
             public void run() {
-                Component joinComponent = componentRenderer.parse(event.getPlayer(), joinString);
+                Component joinComponent = componentRenderer.parse(event.getPlayer(), joinString,
+                        Placeholder.component("username", event.getPlayer().name()));
                 TownyChat.PLUGIN.getServer().broadcast(joinComponent);
             }
         }.runTaskLater(TownyChat.PLUGIN, 5);
@@ -46,7 +47,8 @@ public class MiscListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         String joinString = miscSection.getString("quit_message");
-        Component joinComponent = componentRenderer.parse(event.getPlayer(), joinString);
+        Component joinComponent = componentRenderer.parse(event.getPlayer(), joinString,
+                Placeholder.component("username", event.getPlayer().name()));
         event.quitMessage(joinComponent);
     }
 
@@ -63,6 +65,7 @@ public class MiscListener implements Listener {
         String advancementString = miscSection.getString("advancement." + frame.name().toLowerCase());
         Component advancementComponent = componentRenderer.parse(event.getPlayer(), advancementString,
                 TagResolver.resolver(
+                        Placeholder.component("username", event.getPlayer().name()),
                         Placeholder.component("advancement_title", advancementDisplay.title()),
                         Placeholder.component("advancement_description", advancementDisplay.description())));
 

@@ -1,5 +1,6 @@
 package net.laboulangerie.townychat.core;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -14,6 +15,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.player.ChatPlayer;
@@ -46,7 +48,11 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
             message = MiniMessage.miniMessage().deserialize(textMessage.content());
         }
 
-        return componentRenderer.parse(source, channelFormat, Placeholder.component("message", message));
+        List<TagResolver.Single> resolvers = new ArrayList<>();
+        resolvers.add(Placeholder.component("message", message));
+        resolvers.add(Placeholder.component("username", source.name()));
+
+        return componentRenderer.parse(source, channelFormat, TagResolver.resolver(resolvers));
     }
 
     // TODO : Remove redundant method, but how???
@@ -60,7 +66,11 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
             message = MiniMessage.miniMessage().deserialize(textMessage.content());
         }
 
-        return componentRenderer.parse(source, channelFormat, Placeholder.component("message", message));
+        List<TagResolver.Single> resolvers = new ArrayList<>();
+        resolvers.add(Placeholder.component("message", message));
+        resolvers.add(Placeholder.component("username", source.name()));
+
+        return componentRenderer.parse(source, channelFormat, TagResolver.resolver(resolvers));
     }
 
     private String censorString(String string) {
