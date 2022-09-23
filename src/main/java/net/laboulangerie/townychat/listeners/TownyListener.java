@@ -11,10 +11,12 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
@@ -34,12 +36,10 @@ public class TownyListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTownRemoveResident(TownRemoveResidentEvent event) {
-        Player player = event.getResident().getPlayer();
+        ChatPlayer chatPlayer = residentToChatPlayer(event.getResident());
 
-        if (!player.isOnline())
+        if (chatPlayer == null)
             return;
-
-        ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
         Channel currentChannel = chatPlayer.getCurrentChannel();
 
@@ -55,13 +55,10 @@ public class TownyListener implements Listener {
         Town town = event.getTown();
 
         for (Resident resident : town.getResidents()) {
+            ChatPlayer chatPlayer = residentToChatPlayer(resident);
 
-            Player player = resident.getPlayer();
-
-            if (!player.isOnline())
+            if (chatPlayer == null)
                 return;
-
-            ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             Channel currentChannel = chatPlayer.getCurrentChannel();
 
@@ -78,13 +75,10 @@ public class TownyListener implements Listener {
         Town town = event.getTown();
 
         for (Resident resident : town.getResidents()) {
+            ChatPlayer chatPlayer = residentToChatPlayer(resident);
 
-            Player player = resident.getPlayer();
-
-            if (!player.isOnline())
+            if (chatPlayer == null)
                 return;
-
-            ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             Channel currentChannel = chatPlayer.getCurrentChannel();
 
@@ -104,12 +98,10 @@ public class TownyListener implements Listener {
 
         for (Resident resident : nation.getResidents()) {
 
-            Player player = resident.getPlayer();
+            ChatPlayer chatPlayer = residentToChatPlayer(resident);
 
-            if (!player.isOnline())
+            if (chatPlayer == null)
                 return;
-
-            ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             Channel currentChannel = chatPlayer.getCurrentChannel();
 
@@ -130,13 +122,10 @@ public class TownyListener implements Listener {
         channelManager.addChannel(town, newTownChannel);
 
         // The mayor is the only player in the town on town creation
-        Player player = town.getMayor().getPlayer();
+        ChatPlayer chatPlayer = residentToChatPlayer(town.getMayor());
 
-        // Should be online but just in case (admin commands)
-        if (!player.isOnline())
+        if (chatPlayer == null)
             return;
-
-        ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
         chatPlayer.addChannel(ChannelTypes.TOWN, newTownChannel);
     }
@@ -149,12 +138,10 @@ public class TownyListener implements Listener {
         channelManager.addChannel(nation, newNationChannel);
 
         for (Resident resident : nation.getResidents()) {
-            Player player = resident.getPlayer();
+            ChatPlayer chatPlayer = residentToChatPlayer(resident);
 
-            if (!player.isOnline())
+            if (chatPlayer == null)
                 return;
-
-            ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
             chatPlayer.addChannel(ChannelTypes.NATION, newNationChannel);
         }
@@ -162,12 +149,11 @@ public class TownyListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTownAddResident(TownAddResidentEvent event) {
-        Player player = event.getResident().getPlayer();
 
-        if (!player.isOnline())
+        ChatPlayer chatPlayer = residentToChatPlayer(event.getResident());
+
+        if (chatPlayer == null)
             return;
-
-        ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(player);
 
         Town town = event.getTown();
         Channel townChannel = channelManager.getChannel(town);
@@ -180,5 +166,14 @@ public class TownyListener implements Listener {
             chatPlayer.addChannel(ChannelTypes.NATION, nationChannel);
 
         }
+    }
+
+    private @Nullable ChatPlayer residentToChatPlayer(Resident resident) {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(resident.getUUID());
+
+        if (!offlinePlayer.isOnline())
+            return null;
+
+        return chatPlayerManager.getChatPlayer(offlinePlayer.getPlayer());
     }
 }

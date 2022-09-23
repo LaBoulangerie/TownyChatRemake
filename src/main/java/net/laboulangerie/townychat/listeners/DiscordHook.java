@@ -56,12 +56,11 @@ public class DiscordHook implements ChatHook {
     // From Discord to Minecraft
     @Override
     public void broadcastMessageToChannel(String channelId, Component message) {
-        System.out.println("aaaaa");
+
         // get the destination channel
         Channel destinationChannel = null;
 
         for (Channel channel : channelManager.getChannels().values()) {
-            System.out.println(channel.getId());
             if (channel.getId().equals(channelId)) {
                 destinationChannel = channel;
                 break;
