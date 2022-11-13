@@ -2,6 +2,7 @@ package net.laboulangerie.townychat.listeners;
 
 import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
@@ -28,8 +29,6 @@ public class MiscListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        String joinString = miscSection.getString("join_message");
-
         event.joinMessage(null);
 
         // Wait for Towny to create new resident
@@ -37,8 +36,12 @@ public class MiscListener implements Listener {
 
             @Override
             public void run() {
-                Component joinComponent = componentRenderer.parse(event.getPlayer(), joinString,
-                        Placeholder.component("username", event.getPlayer().name()));
+                Player player = event.getPlayer();
+                String joinString = player.hasPlayedBefore()
+                        ? miscSection.getString("join_message")
+                        : miscSection.getString("first_join_message");
+                Component joinComponent = componentRenderer.parse(player, joinString,
+                        Placeholder.component("username", player.name()));
                 TownyChat.PLUGIN.getServer().broadcast(joinComponent);
             }
         }.runTaskLater(TownyChat.PLUGIN, 5);

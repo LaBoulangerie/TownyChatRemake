@@ -74,6 +74,7 @@ blacklist:
 
 # MiniMessage, Placeholders and Tags can be used here
 misc:
+    first_join_message: "<gradient:green:yellow>➔ Bienvenue <username>"
     join_message: "<green>→</green> <rank> <username>"
     quit_message: "<red>←</red> <rank> <username>"
     advancement:
