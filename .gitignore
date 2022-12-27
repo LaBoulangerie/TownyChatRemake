@@ -30,3 +30,4 @@ out/
 
 # Common working directory
 run/
+.DS_STORE
