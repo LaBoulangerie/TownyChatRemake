@@ -57,19 +57,16 @@ public class DiscordHook implements ChatHook {
     @Override
     public void broadcastMessageToChannel(String channelId, Component message) {
 
-        // get the destination channel
-        Channel destinationChannel = null;
+        // default to global channel
+        Channel destinationChannel = TownyChat.PLUGIN.getGlobalChannel();
 
+        // get the destination channel
         for (Channel channel : channelManager.getChannels().values()) {
             if (channel.getId().equals(channelId)) {
                 destinationChannel = channel;
                 break;
             }
         }
-
-        // return if channel was not available
-        if (destinationChannel == null)
-            return;
 
         String messageString = MessageUtil.toLegacy(message);
 
