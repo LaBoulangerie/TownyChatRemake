@@ -16,7 +16,7 @@
 
 ## 🛠 Usage
 
-⚠️ You must use [Paper 1.18.2](https://papermc.io/downloads) to run this plugin.
+⚠️ You must use [Paper 1.19.x](https://papermc.io/downloads) to run this plugin.
 
 This is because it uses the [Adventure library](https://github.com/KyoriPowered/adventure) to handle chat formatting.
 
@@ -74,12 +74,10 @@ By priority:
         -   [ ] `decorations` - Use decoration in message (italic, bold, underline, strikethrough, obfuscated)
         -   [ ] `misc` - Use every other MiniMessage features in message (click, hover, keybind, translatable, insertion, rainbow, gradient, transition, font, newline)
 
--   [ ] Switch channels quickly with /tc /nc /gc...
 -   [ ] Cooldown
--   [ ] Support for legacy colors formatting (e.g. &e for yellow text)
 -   [ ] (?) Custom channels
 -   [ ] (?) Muteable parameter for channels
 
 ## 🙏 Support
 
-Please contact `PainOchoco#3570` on Discord if you have any issues or requests!
+Please contact `PainOchoco#1929` on Discord if you have any issues or requests!
