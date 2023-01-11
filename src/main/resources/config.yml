@@ -67,6 +67,7 @@ lang:
     err_channel_disabled: "You disabled this channel! Use /<channel> toggle chat to enable it"
     err_no_message: "You didn't sent a message. Usage: /<channel> your message"
 
+# Set [] if you want to disable the blacklist
 blacklist:
     - "chocolatine"
     - "fuck"

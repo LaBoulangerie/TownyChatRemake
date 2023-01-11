@@ -6,7 +6,6 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,12 +21,10 @@ import net.laboulangerie.townychat.player.ChatPlayer;
 import net.laboulangerie.townychat.player.ChatPlayerManager;
 
 public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
-    private FileConfiguration config;
     private ChatPlayerManager chatPlayerManager;
     private ComponentRenderer componentRenderer;
 
     public TownyChatRenderer() {
-        this.config = TownyChat.PLUGIN.getConfig();
         this.chatPlayerManager = TownyChat.PLUGIN.getChatPlayerManager();
         this.componentRenderer = TownyChat.PLUGIN.getComponentRenderer();
     }
@@ -74,7 +71,7 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
     }
 
     private String censorString(String string) {
-        List<String> words = config.getStringList("blacklist");
+        List<String> words = TownyChat.PLUGIN.getConfig().getStringList("blacklist");
         String[] censorChars = { "#", "@", "!", "*" };
 
         for (String word : words) {
