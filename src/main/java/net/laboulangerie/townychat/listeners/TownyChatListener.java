@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -46,7 +47,7 @@ public class TownyChatListener implements Listener {
         this.townyAPI = TownyChat.PLUGIN.getTownyAPI();
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
         event.renderer(ChatRenderer.viewerUnaware(townyChatRenderer));
         event.viewers().clear();
