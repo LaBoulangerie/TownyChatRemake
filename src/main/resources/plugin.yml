@@ -20,7 +20,19 @@ permissions:
         default: true
     townychat.spy:
         default: op
-    townychat.format:
+    townychat.format.color:
+        default: op
+    townychat.format.bold:
+        default: op
+    townychat.format.underline:
+        default: op
+    townychat.format.italic:
+        default: op
+    townychat.format.strikethrough:
+        default: op
+    townychat.format.obfuscated:
+        default: op
+    townychat.format.rainbow:
         default: op
 
     townychat.*:
@@ -29,3 +41,10 @@ permissions:
             townychat.switch: true
             townychat.spy: true
             townychat.format: true
+            townychat.format.color: true
+            townychat.format.bold: true
+            townychat.format.underline: true
+            townychat.format.italic: true
+            townychat.format.strikethrough: true
+            townychat.format.obfuscated: true
+            townychat.format.rainbow: true
