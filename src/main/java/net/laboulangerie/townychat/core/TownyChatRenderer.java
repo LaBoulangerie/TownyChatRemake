@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import io.papermc.paper.chat.ChatRenderer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -51,13 +50,7 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
         this.componentRenderer = TownyChat.PLUGIN.getComponentRenderer();
     }
 
-    @Override
-    public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName,
-            @NotNull Component message) {
-
-        ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
-        String channelFormat = chatPlayer.getCurrentChannel().getFormat();
-
+    private Component buildMessage(@NotNull Player source, Component message, String channelFormat) {
         String plainText = PlainTextComponentSerializer.plainText().serialize(message);
         censorString(plainText);
 
@@ -68,10 +61,14 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
             }
         });
 
-        message = MiniMessage.builder()
-                .tags(TagResolver.builder().resolvers(resolvers).build())
-                .build()
-                .deserialize(plainText);
+        if (source.hasPermission("townychat.format.all")) {
+            message = MiniMessage.miniMessage().deserialize(plainText);
+        } else {
+            message = MiniMessage.builder()
+                    .tags(TagResolver.builder().resolvers(resolvers).build())
+                    .build()
+                    .deserialize(plainText);
+        }
 
         resolvers.add(Placeholder.component("message", message));
         resolvers.add(Placeholder.component("username", source.name()));
@@ -79,22 +76,20 @@ public class TownyChatRenderer implements ChatRenderer.ViewerUnaware {
         return componentRenderer.parse(source, channelFormat, TagResolver.resolver(resolvers));
     }
 
-    // TODO : Remove redundant method, but how???
-    public @NotNull Component spyRender(@NotNull Player source, @NotNull Component message) {
+    @Override
+    public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName,
+            @NotNull Component message) {
+        ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
+        String channelFormat = chatPlayer.getCurrentChannel().getFormat();
 
+        return buildMessage(source, message, channelFormat);
+    }
+
+    public @NotNull Component spyRender(@NotNull Player source, @NotNull Component message) {
         ChatPlayer chatPlayer = chatPlayerManager.getChatPlayer(source);
         String channelFormat = chatPlayer.getCurrentChannel().getSpyFormat();
 
-        if (source.hasPermission("townychat.format")) {
-            TextComponent textMessage = (TextComponent) message;
-            message = MiniMessage.miniMessage().deserialize(textMessage.content());
-        }
-
-        List<TagResolver.Single> resolvers = new ArrayList<>();
-        resolvers.add(Placeholder.component("message", message));
-        resolvers.add(Placeholder.component("username", source.name()));
-
-        return componentRenderer.parse(source, channelFormat, TagResolver.resolver(resolvers));
+        return buildMessage(source, message, channelFormat);
     }
 
     private String censorString(String string) {

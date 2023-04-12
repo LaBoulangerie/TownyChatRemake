@@ -34,7 +34,8 @@ permissions:
         default: op
     townychat.format.rainbow:
         default: op
-
+    townychat.format.all:
+        default: op
     townychat.*:
         default: op
         children:
@@ -48,3 +49,4 @@ permissions:
             townychat.format.strikethrough: true
             townychat.format.obfuscated: true
             townychat.format.rainbow: true
+            townychat.format.all: true
