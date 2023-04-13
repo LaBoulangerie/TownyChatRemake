@@ -16,7 +16,7 @@
 
 ## 🛠 Usage
 
-⚠️ You must use [Paper 1.19.x](https://papermc.io/downloads) to run this plugin.
+⚠️ You must use [Paper 1.19.4](https://papermc.io/downloads) to run this plugin.
 
 This is because it uses the [Adventure library](https://github.com/KyoriPowered/adventure) to handle chat formatting.
 
