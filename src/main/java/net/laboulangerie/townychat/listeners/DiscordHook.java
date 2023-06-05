@@ -8,10 +8,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.Plugin;
 
 import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component;
 import github.scarsz.discordsrv.hooks.chat.ChatHook;
 import github.scarsz.discordsrv.util.LangUtil;
 import github.scarsz.discordsrv.util.MessageUtil;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.laboulangerie.townychat.TownyChat;
 import net.laboulangerie.townychat.channels.Channel;
