@@ -33,8 +33,14 @@ public class DiscordHook implements ChatHook {
     // From Minecraft to Discord
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMessage(AsyncChatHookEvent event) {
+        String channelId = event.getChannel().getId();
+
+        // DiscordSRV handles it automatically
+        if (channelId == "global")
+            return;
+
         // make sure chat channel is registered with a destination
-        if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(event.getChannel().getId()) == null) {
+        if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(channelId) == null) {
             DiscordSRV.debug("Tried looking up destination Discord channel for Towny channel "
                     + event.getChannel().getName() + " but none found");
             return;
@@ -42,6 +48,7 @@ public class DiscordHook implements ChatHook {
 
         String messageString = MessageUtil
                 .stripMiniTokens(PlainTextComponentSerializer.plainText().serialize(event.getMessage()));
+        System.out.println("Received " + messageString);
 
         // make sure message isn't blank
         if (StringUtils.isBlank(messageString)) {
@@ -49,8 +56,8 @@ public class DiscordHook implements ChatHook {
             return;
         }
 
-        DiscordSRV.getPlugin().processChatMessage(event.getPlayer(), messageString, event.getChannel().getId(),
-                event.isCancelled(), event);
+        DiscordSRV.getPlugin().processChatMessage(event.getPlayer(), messageString, channelId, event.isCancelled(),
+                event);
     }
 
     // From Discord to Minecraft
