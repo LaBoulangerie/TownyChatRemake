@@ -48,7 +48,6 @@ public class DiscordHook implements ChatHook {
 
         String messageString = MessageUtil
                 .stripMiniTokens(PlainTextComponentSerializer.plainText().serialize(event.getMessage()));
-        System.out.println("Received " + messageString);
 
         // make sure message isn't blank
         if (StringUtils.isBlank(messageString)) {
