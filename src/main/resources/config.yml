@@ -37,6 +37,7 @@ channels:
         format: "<local_prefix> <town><nation><rank> <username> > <green><message>"
         spy_format: "<spy_prefix> <local_prefix> <town><nation> <username> > <dark_purple><message>"
         radius: 20
+        command: "lc"
 
 # You can define custom tags in the section below
 # and use them in channel formats like so: <tag_name>
