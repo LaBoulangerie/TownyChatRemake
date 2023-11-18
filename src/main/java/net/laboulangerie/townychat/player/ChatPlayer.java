@@ -77,6 +77,9 @@ public class ChatPlayer {
 
     public void removeChannel(ChannelTypes channelType) {
         Channel channel = getChannel(channelType);
+        if (currentChannel.getType() == channelType) {
+            setCurrentChannel(ChannelTypes.GLOBAL);
+        }
         this.activeChannels.remove(channel);
         this.channels.remove(channelType);
     }

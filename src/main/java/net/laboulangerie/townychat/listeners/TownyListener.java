@@ -1,5 +1,6 @@
 package net.laboulangerie.townychat.listeners;
 
+import com.palmergames.bukkit.towny.event.NationAddTownEvent;
 import com.palmergames.bukkit.towny.event.NewNationEvent;
 import com.palmergames.bukkit.towny.event.NewTownEvent;
 import com.palmergames.bukkit.towny.event.PreDeleteNationEvent;
@@ -10,6 +11,8 @@ import com.palmergames.bukkit.towny.event.nation.NationPreTownLeaveEvent;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -37,121 +40,55 @@ public class TownyListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTownRemoveResident(TownRemoveResidentEvent event) {
         ChatPlayer chatPlayer = residentToChatPlayer(event.getResident());
-
         if (chatPlayer == null)
             return;
-
-        Channel currentChannel = chatPlayer.getCurrentChannel();
-
-        if (currentChannel.getType() == ChannelTypes.TOWN) {
-            chatPlayer.setCurrentChannel(ChannelTypes.GLOBAL);
-        }
-
         chatPlayer.removeChannel(ChannelTypes.TOWN);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onTownLeaveNation(NationPreTownLeaveEvent event) {
         Town town = event.getTown();
-
-        for (Resident resident : town.getResidents()) {
-            ChatPlayer chatPlayer = residentToChatPlayer(resident);
-
-            if (chatPlayer == null)
-                return;
-
-            Channel currentChannel = chatPlayer.getCurrentChannel();
-
-            if (currentChannel.getType() == ChannelTypes.NATION) {
-                chatPlayer.setCurrentChannel(ChannelTypes.GLOBAL);
-            }
-
-            chatPlayer.removeChannel(ChannelTypes.NATION);
-        }
+        removeChannelFromResidents(town.getResidents(), ChannelTypes.NATION);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onTownDelete(PreDeleteTownEvent event) {
         Town town = event.getTown();
-
-        for (Resident resident : town.getResidents()) {
-            ChatPlayer chatPlayer = residentToChatPlayer(resident);
-
-            if (chatPlayer == null)
-                return;
-
-            Channel currentChannel = chatPlayer.getCurrentChannel();
-
-            if (currentChannel.getType() == ChannelTypes.TOWN) {
-                chatPlayer.setCurrentChannel(ChannelTypes.GLOBAL);
-            }
-
-            chatPlayer.removeChannel(ChannelTypes.TOWN);
-        }
-
+        removeChannelFromResidents(town.getResidents(), ChannelTypes.TOWN);
         channelManager.removeChannel(town);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNationDelete(PreDeleteNationEvent event) {
         Nation nation = event.getNation();
-
-        for (Resident resident : nation.getResidents()) {
-
-            ChatPlayer chatPlayer = residentToChatPlayer(resident);
-
-            if (chatPlayer == null)
-                return;
-
-            Channel currentChannel = chatPlayer.getCurrentChannel();
-
-            if (currentChannel.getType() == ChannelTypes.NATION) {
-                chatPlayer.setCurrentChannel(ChannelTypes.GLOBAL);
-            }
-
-            chatPlayer.removeChannel(ChannelTypes.NATION);
-        }
+        removeChannelFromResidents(nation.getResidents(), ChannelTypes.NATION);
         channelManager.removeChannel(nation);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onNewTown(NewTownEvent event) {
         Town town = event.getTown();
-
         Channel newTownChannel = new Channel(ChannelTypes.TOWN, town);
         channelManager.addChannel(town, newTownChannel);
 
         // The mayor is the only player in the town on town creation
         ChatPlayer chatPlayer = residentToChatPlayer(town.getMayor());
-
         if (chatPlayer == null)
             return;
-
         chatPlayer.addChannel(ChannelTypes.TOWN, newTownChannel);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onNewNation(NewNationEvent event) {
         Nation nation = event.getNation();
-
         Channel newNationChannel = new Channel(ChannelTypes.NATION, nation);
         channelManager.addChannel(nation, newNationChannel);
-
-        for (Resident resident : nation.getResidents()) {
-            ChatPlayer chatPlayer = residentToChatPlayer(resident);
-
-            if (chatPlayer == null)
-                return;
-
-            chatPlayer.addChannel(ChannelTypes.NATION, newNationChannel);
-        }
+        addChannelToResidents(nation.getResidents(), newNationChannel);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTownAddResident(TownAddResidentEvent event) {
-
         ChatPlayer chatPlayer = residentToChatPlayer(event.getResident());
-
         if (chatPlayer == null)
             return;
 
@@ -162,10 +99,16 @@ public class TownyListener implements Listener {
         if (town.hasNation()) {
             Nation nation = town.getNationOrNull();
             Channel nationChannel = channelManager.getChannel(nation);
-
             chatPlayer.addChannel(ChannelTypes.NATION, nationChannel);
-
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onNationAddTown(NationAddTownEvent event) {
+        Town town = event.getTown();
+        Nation nation = event.getNation();
+        Channel nationChannel = channelManager.getChannel(nation);
+        addChannelToResidents(town.getResidents(), nationChannel);
     }
 
     private @Nullable ChatPlayer residentToChatPlayer(Resident resident) {
@@ -175,5 +118,23 @@ public class TownyListener implements Listener {
             return null;
 
         return chatPlayerManager.getChatPlayer(offlinePlayer.getPlayer());
+    }
+
+    private void addChannelToResidents(List<Resident> residents, Channel channel) {
+        for (Resident resident : residents) {
+            ChatPlayer chatPlayer = residentToChatPlayer(resident);
+            if (chatPlayer == null)
+                continue;
+            chatPlayer.addChannel(channel.getType(), channel);
+        }
+    }
+
+    private void removeChannelFromResidents(List<Resident> residents, ChannelTypes channelType) {
+        for (Resident resident : residents) {
+            ChatPlayer chatPlayer = residentToChatPlayer(resident);
+            if (chatPlayer == null)
+                continue;
+            chatPlayer.removeChannel(channelType);
+        }
     }
 }
