@@ -35,10 +35,6 @@ public class DiscordHook implements ChatHook {
     public void onMessage(AsyncChatHookEvent event) {
         String channelId = event.getChannel().getId();
 
-        // DiscordSRV handles it automatically
-        if (channelId == "global")
-            return;
-
         // make sure chat channel is registered with a destination
         if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(channelId) == null) {
             DiscordSRV.debug("Tried looking up destination Discord channel for Towny channel "
